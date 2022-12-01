@@ -1,8 +1,0 @@
-{
-  "properties": [
-    {
-      "defaultValue": true,
-      "name": "crudframework.default-transformers-enabled"
-    }
-  ]
-}

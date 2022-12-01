@@ -106,3 +106,8 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .flattened-pom.xml
+
+### Gradle ###
+.gradle
+**/build/
+!src/**/build/

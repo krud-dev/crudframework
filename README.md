@@ -1,7 +1,7 @@
 # CRUD Framework
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/studio.crud.crudframework/crud-framewor-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/studio.crud.crudframework/crud-framework)
-[![CircleCI](https://circleci.com/gh/crud-studio/crud-framework.svg?style=shield)](https://circleci.com/gh/crud-studio/crud-framework)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/dev.krud.crudframework/crud-framework-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/dev.krud.crudframework/crud-framework)
+[![CircleCI](https://circleci.com/gh/krud-dev/crud-framework.svg?style=shield)](https://circleci.com/gh/krud-dev/crud-framework)
 
 
 The CRUD Framework is a Spring-powered framework intended to simplify and expand on CRUD operations in Spring, currently
@@ -10,7 +10,7 @@ supporting both MongoDB(Via Spring Data) and JPA.
 
 ## Compatibility
 
-The CRUD Framework is currently compatible with Spring Boot 2.0.8
+The CRUD Framework is currently compatible with Spring Boot 2.6.7
 
 ## Getting started
 
@@ -25,16 +25,16 @@ Maven:
 ```xml
 
 <dependency>
-    <groupId>studio.crud.crudframework</groupId>
+    <groupId>dev.krud.crudframework</groupId>
     <artifactId>crud-framework-hibernate5-connector</artifactId>
-    <version>0.7.0</version>
+    <version>0.9.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("studio.crud.crudframework:crud-framework-hibernate5-connector:0.7.0")
+implementation("dev.krud.crudframework:crud-framework-hibernate5-connector:0.9.0")
 ```
 
 ### MongoDB Connector
@@ -42,16 +42,16 @@ implementation("studio.crud.crudframework:crud-framework-hibernate5-connector:0.
 ```xml
 
 <dependency>
-    <groupId>studio.crud.crudframework</groupId>
+    <groupId>dev.krud.crudframework</groupId>
     <artifactId>crud-framework-mongo-connector</artifactId>
-    <version>0.7.0</version>
+    <version>0.9.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("studio.crud.crudframework:crud-framework-mongo-connector:0.7.0")
+implementation("dev.krud.crudframework:crud-framework-mongo-connector:0.9.0")
 ```
 
 
@@ -62,7 +62,7 @@ Contains useful utilities and classes for web operations
 ```xml
 
 <dependency>
-    <groupId>studio.crud.crudframework</groupId>
+    <groupId>dev.krud.crudframework</groupId>
     <artifactId>crud-framework-web</artifactId>
     <version>0.3.3</version>
 </dependency>
@@ -71,7 +71,7 @@ Contains useful utilities and classes for web operations
 Gradle:
 
 ```kotlin
-implementation("studio.crud.crudframework:crud-framework-web:0.3.3")
+implementation("dev.krud.crudframework:crud-framework-web:0.3.3")
 ```
 
 ### Operation
