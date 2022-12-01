@@ -27,12 +27,10 @@ if ! [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 # Tag release and publish changelog
-./gradlew -Prelease -Pcrudframework.version=$VERSION clean jar publishAllPublicationsToOSSRHRepository
 git tag -a v$VERSION -m "Release v$VERSION"
-conventional-changelog -p angular -i CHANGELOG.md -s -r 0
 sed -i '' -E "s/<version>.*<\/version>/<version>$VERSION<\/version>/g" README.md
 sed -i '' -E "s/dev.krud:crudframework:([0-9]+\.[0-9]+\.[0-9]+)/dev.krud:crudframework:$VERSION/g" README.md
 git add README.md
-git add CHANGELOG.md
 git commit -m "chore(release): release v$VERSION"
+./gradlew -Prelease -Pcrudframework.version=$VERSION clean jar publishAllPublicationsToOSSRHRepository
 #git push origin v$VERSION
