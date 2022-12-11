@@ -26,7 +26,7 @@ class CrudRestServiceImpl(
         }
         definition.clazz as KClass<BaseCrudEntity<Serializable>>
 
-        return crudHandler.show(id, definition.clazz.java, definition.effectiveShowRoClass()).applyPolicies().execute()
+        return crudHandler.show(id, definition.clazz.java, definition.effectiveShowRoClass().java).applyPolicies().execute()
     }
 
     override fun indexCount(resourceName: String, filter: DynamicModelFilter): Long {
@@ -36,7 +36,7 @@ class CrudRestServiceImpl(
         }
         definition.clazz as KClass<BaseCrudEntity<Serializable>>
 
-        return crudHandler.index(filter, definition.clazz.java, definition.effectiveIndexRoClass()).count()
+        return crudHandler.index(filter, definition.clazz.java, definition.effectiveIndexRoClass().java).count()
     }
 
     override fun index(resourceName: String, filter: DynamicModelFilter): PagingDTO<out Any> {
@@ -45,7 +45,7 @@ class CrudRestServiceImpl(
             throw CrudException("Index action is not allowed for resource $resourceName")
         }
         definition.clazz as KClass<BaseCrudEntity<Serializable>>
-        return crudHandler.index(filter, definition.clazz.java, definition.effectiveIndexRoClass()).applyPolicies().execute()
+        return crudHandler.index(filter, definition.clazz.java, definition.effectiveIndexRoClass().java).applyPolicies().execute()
     }
 
     override fun delete(resourceName: String, id: Serializable): Any? {
@@ -63,8 +63,8 @@ class CrudRestServiceImpl(
             throw CrudException("Create action is not allowed for resource $resourceName")
         }
         definition.clazz as KClass<BaseCrudEntity<Serializable>>
-        val roClazz = definition.effectiveCreateRoClass()
-        return crudHandler.createFrom(GSON.fromJson(body, roClazz), definition.clazz.java, definition.effectiveShowRoClass()).applyPolicies().execute()
+        val roClazz = definition.effectiveCreateRoClass().java
+        return crudHandler.createFrom(GSON.fromJson(body, roClazz), definition.clazz.java, definition.effectiveShowRoClass().java).applyPolicies().execute()
     }
 
     override fun createMany(resourceName: String, body: String): ManyCrudResult<out BaseRO<*>, out BaseRO<*>> {
@@ -73,14 +73,14 @@ class CrudRestServiceImpl(
             throw CrudException("Create action is not allowed for resource $resourceName")
         }
         definition.clazz as KClass<BaseCrudEntity<Serializable>>
-        val typeToken = TypeToken.getParameterized(List::class.java, definition.effectiveCreateRoClass()).type
+        val typeToken = TypeToken.getParameterized(List::class.java, definition.effectiveCreateRoClass().java).type
         val list = Gson().fromJson(body, typeToken) as List<BaseRO<*>>
 
         val successList = mutableSetOf<BaseRO<*>>()
         val failureList = mutableListOf<ManyFailedReason<BaseRO<*>>>()
         for (item in list) {
             try {
-                val result = crudHandler.createFrom(item, definition.clazz.java, definition.effectiveShowRoClass()).applyPolicies().execute()
+                val result = crudHandler.createFrom(item, definition.clazz.java, definition.effectiveShowRoClass().java).applyPolicies().execute()
                 successList.add(result)
             } catch (e: Exception) {
                 failureList.add(ManyFailedReason(item, e.message ?: "Unknown error"))
@@ -95,8 +95,8 @@ class CrudRestServiceImpl(
             throw CrudException("Update action is not allowed for resource $resourceName")
         }
         definition.clazz as KClass<BaseCrudEntity<Serializable>>
-        val roClazz = definition.effectiveUpdateRoClass()
-        return crudHandler.updateFrom(id, GSON.fromJson(body, roClazz), definition.clazz.java, definition.effectiveShowRoClass()).applyPolicies().execute()
+        val roClazz = definition.effectiveUpdateRoClass().java
+        return crudHandler.updateFrom(id, GSON.fromJson(body, roClazz), definition.clazz.java, definition.effectiveShowRoClass().java).applyPolicies().execute()
     }
 
     override fun updateMany(resourceName: String, body: String): ManyCrudResult<out BaseRO<*>, out BaseRO<*>> {
@@ -105,60 +105,20 @@ class CrudRestServiceImpl(
             throw CrudException("Update action is not allowed for resource $resourceName")
         }
         definition.clazz as KClass<BaseCrudEntity<Serializable>>
-        val typeToken = TypeToken.getParameterized(List::class.java, definition.effectiveUpdateRoClass()).type
+        val typeToken = TypeToken.getParameterized(List::class.java, definition.effectiveUpdateRoClass().java).type
         val list = Gson().fromJson(body, typeToken) as List<BaseRO<*>>
 
         val successList = mutableSetOf<BaseRO<*>>()
         val failureList = mutableListOf<ManyFailedReason<BaseRO<*>>>()
         for (item in list) {
             try {
-                val result = crudHandler.updateFrom(item.id as Serializable, item, definition.clazz.java, definition.effectiveShowRoClass()).applyPolicies().execute()
+                val result = crudHandler.updateFrom(item.id as Serializable, item, definition.clazz.java, definition.effectiveShowRoClass().java).applyPolicies().execute()
                 successList.add(result)
             } catch (e: Exception) {
                 failureList.add(ManyFailedReason(item, e.message ?: "Unknown error"))
             }
         }
         return ManyCrudResult(successList, failureList)
-    }
-
-    private fun CrudControllerDefinition.effectiveMainRoClass(): Class<out BaseRO<*>> {
-        return if (annotation.roMapping.mainRoClass != BaseRO::class) {
-            annotation.roMapping.mainRoClass.java as Class<out BaseRO<*>>
-        } else {
-            throw IllegalArgumentException("No roMapping.mainRoClass specified for resource ${annotation.resourceName}")
-        }
-    }
-
-    private fun CrudControllerDefinition.effectiveShowRoClass(): Class<out BaseRO<*>> {
-        return if (annotation.roMapping.showRoClass != BaseRO::class) {
-            annotation.roMapping.showRoClass.java as Class<out BaseRO<*>>
-        } else {
-            effectiveMainRoClass()
-        }
-    }
-
-    private fun CrudControllerDefinition.effectiveIndexRoClass(): Class<out BaseRO<*>> {
-        return if (annotation.roMapping.indexRoClass != BaseRO::class) {
-            annotation.roMapping.indexRoClass.java as Class<out BaseRO<*>>
-        } else {
-            effectiveMainRoClass()
-        }
-    }
-
-    private fun CrudControllerDefinition.effectiveUpdateRoClass(): Class<out BaseRO<*>> {
-        return if (annotation.roMapping.updateRoClass != BaseRO::class) {
-            annotation.roMapping.updateRoClass.java as Class<out BaseRO<*>>
-        } else {
-            effectiveMainRoClass()
-        }
-    }
-
-    private fun CrudControllerDefinition.effectiveCreateRoClass(): Class<out BaseRO<*>> {
-        return if (annotation.roMapping.createRoClass != BaseRO::class) {
-            annotation.roMapping.createRoClass.java as Class<out BaseRO<*>>
-        } else {
-            effectiveMainRoClass()
-        }
     }
 
     private fun getCrudControllerDefinition(resourceName: String): CrudControllerDefinition {
