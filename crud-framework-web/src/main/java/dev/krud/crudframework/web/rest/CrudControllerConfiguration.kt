@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ImportAware
 import org.springframework.core.type.AnnotationMetadata
 import dev.krud.crudframework.crud.handler.CrudHandler
 import dev.krud.crudframework.model.BaseCrudEntity
+import org.reflections.util.ConfigurationBuilder
 import kotlin.reflect.KClass
 
 @Configuration
@@ -22,7 +23,7 @@ class CrudControllerConfiguration : ImportAware, BeanFactoryPostProcessor {
     }
 
     override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {
-        Reflections(packageName).getTypesAnnotatedWith(CrudController::class.java).forEach {
+        Reflections(ConfigurationBuilder().forPackages(packageName)).getTypesAnnotatedWith(CrudController::class.java).forEach {
             val crudController = it.getAnnotation(CrudController::class.java)
             val definition = CrudControllerDefinition(crudController, it.kotlin as KClass<BaseCrudEntity<*>>)
             beanFactory.registerSingleton("${it.simpleName}CrudControllerDefinition", definition)
