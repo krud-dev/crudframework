@@ -1,15 +1,15 @@
 package dev.krud.crudframework.crud.handler
 
-import org.springframework.beans.factory.InitializingBean
-import org.springframework.beans.factory.ObjectProvider
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.ApplicationContext
 import dev.krud.crudframework.crud.policy.Policy
 import dev.krud.crudframework.crud.policy.PolicyRuleType
 import dev.krud.crudframework.crud.security.PrincipalProvider
 import dev.krud.crudframework.model.PersistentEntity
 import dev.krud.crudframework.modelfilter.DynamicModelFilter
 import dev.krud.crudframework.modelfilter.FilterField
+import org.springframework.beans.factory.InitializingBean
+import org.springframework.beans.factory.ObjectProvider
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationContext
 import java.security.Principal
 
 internal class CrudSecurityHandlerImpl(
@@ -28,13 +28,15 @@ internal class CrudSecurityHandlerImpl(
     }
 
     override fun getPolicies(clazz: Class<out PersistentEntity>): List<Policy<PersistentEntity>> {
-        return applicationContext.getBeansOfType(Policy::class.java).values.toList() as List<Policy<PersistentEntity>>
+        return applicationContext.getBeansOfType(Policy::class.java)
+            .values
+            .filter { it.clazz == clazz }
+            .toList() as List<Policy<PersistentEntity>>
     }
 
     override fun decorateFilter(clazz: Class<out PersistentEntity>, filter: DynamicModelFilter) {
-        val policies = getPolicies(clazz)
         val principal = principalProvider.ifAvailable?.getPrincipal()
-        policies.forEach { policy ->
+        getPolicies(clazz).forEach { policy ->
             val filterFields = policy.getFilterFields(principal)
             filter.filterFields.addAll(filterFields)
         }
@@ -45,8 +47,8 @@ internal class CrudSecurityHandlerImpl(
     }
 
     override fun evaluatePreRules(type: PolicyRuleType, clazz: Class<out PersistentEntity>): MultiPolicyResult {
-        val policies = getPolicies(clazz)
-        val results = policies.map { it.evaluatePreRules(type, principalProvider.ifAvailable?.getPrincipal()) }
+        val results = getPolicies(clazz)
+            .map { it.evaluatePreRules(type, principalProvider.ifAvailable?.getPrincipal()) }
         return MultiPolicyResult(
             clazz,
             results.all { it.success },

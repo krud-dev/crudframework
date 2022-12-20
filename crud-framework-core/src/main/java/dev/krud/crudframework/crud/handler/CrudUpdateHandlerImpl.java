@@ -127,7 +127,7 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateFromInternal(ID id, Object object, Class<Entity> clazz,
 																								  HooksDTO<CRUDPreUpdateFromHook<ID, Entity>, CRUDOnUpdateFromHook<ID, Entity>, CRUDPostUpdateFromHook<ID, Entity>> hooks, boolean applyPolicies) {
 		DynamicModelFilter filter = new DynamicModelFilter()
-				.add(FilterFields.eq("id", FilterFieldDataType.get(id.getClass()), clazz));
+				.add(FilterFields.eq("id", FilterFieldDataType.get(id.getClass()), id));
 		if (applyPolicies) {
 			crudSecurityHandler.evaluatePreRulesAndThrow(PolicyRuleType.CAN_UPDATE, clazz);
 			crudSecurityHandler.decorateFilter(clazz, filter);
