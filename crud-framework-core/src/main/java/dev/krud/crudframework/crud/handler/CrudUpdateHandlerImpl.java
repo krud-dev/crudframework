@@ -19,7 +19,7 @@ import dev.krud.crudframework.modelfilter.DynamicModelFilter;
 import dev.krud.crudframework.modelfilter.FilterFields;
 import dev.krud.crudframework.modelfilter.enums.FilterFieldDataType;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

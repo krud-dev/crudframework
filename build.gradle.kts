@@ -4,7 +4,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "1.6.0"
+    id("org.jetbrains.dokka") version "1.7.20"
 }
 
 if (hasProperty("release")) {
@@ -15,7 +15,10 @@ if (hasProperty("release")) {
         apply(plugin = "org.jetbrains.dokka")
         group = "dev.krud"
         version = extra["crudframework.version"] ?: error("crudframework.version is not set")
-        java.sourceCompatibility = JavaVersion.VERSION_11
+        java {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        }
         val isSnapshot = version.toString().endsWith("-SNAPSHOT")
         val repoUri = if (isSnapshot) {
             "https://s01.oss.sonatype.org/content/repositories/snapshots/"

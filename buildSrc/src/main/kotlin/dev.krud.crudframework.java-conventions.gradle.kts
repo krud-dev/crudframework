@@ -4,7 +4,6 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 plugins {
     `java-library`
     kotlin("jvm")
-    kotlin("plugin.spring")
     id("org.springframework.boot")
 }
 
@@ -21,7 +20,6 @@ dependencies {
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
 
     // Misc
     api("org.jetbrains:annotations:23.0.0")

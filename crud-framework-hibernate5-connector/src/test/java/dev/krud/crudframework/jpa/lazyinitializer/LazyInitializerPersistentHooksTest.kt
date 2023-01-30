@@ -1,9 +1,9 @@
 package dev.krud.crudframework.jpa.lazyinitializer
 
-import org.junit.Test
 import dev.krud.crudframework.modelfilter.DynamicModelFilter
 import dev.krud.crudframework.ro.PagingDTO
 import dev.krud.crudframework.ro.PagingRO
+import org.junit.jupiter.api.Test
 
 class LazyInitializerPersistentHooksTest {
 

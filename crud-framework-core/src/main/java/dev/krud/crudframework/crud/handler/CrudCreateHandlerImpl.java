@@ -17,7 +17,7 @@ import dev.krud.crudframework.crud.policy.PolicyRuleType;
 import dev.krud.crudframework.exception.WrapException;
 import dev.krud.crudframework.model.BaseCrudEntity;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;

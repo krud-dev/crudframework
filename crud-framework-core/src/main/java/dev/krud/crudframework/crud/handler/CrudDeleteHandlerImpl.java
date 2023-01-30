@@ -1,7 +1,5 @@
 package dev.krud.crudframework.crud.handler;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import dev.krud.crudframework.crud.exception.CrudDeleteException;
 import dev.krud.crudframework.crud.hooks.HooksDTO;
 import dev.krud.crudframework.crud.hooks.delete.CRUDOnDeleteHook;
@@ -15,12 +13,13 @@ import dev.krud.crudframework.model.BaseCrudEntity;
 import dev.krud.crudframework.modelfilter.DynamicModelFilter;
 import dev.krud.crudframework.modelfilter.FilterFields;
 import dev.krud.crudframework.modelfilter.enums.FilterFieldDataType;
+import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Objects;
 
 @WrapException(CrudDeleteException.class)
 public class CrudDeleteHandlerImpl implements CrudDeleteHandler {

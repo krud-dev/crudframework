@@ -27,7 +27,7 @@ import dev.krud.crudframework.modelfilter.enums.FilterFieldDataType;
 import dev.krud.crudframework.ro.PagingDTO;
 import dev.krud.crudframework.ro.PagingRO;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
