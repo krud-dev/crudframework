@@ -2,7 +2,6 @@ package dev.krud.crudframework.web.ro;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import dev.krud.crudframework.exception.dto.ErrorField;
-import dev.krud.crudframework.ro.PagingRO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,8 +23,6 @@ public class ResultRO<Payload> implements Serializable {
 
 	// result of operation
 	private Payload result;
-
-	private PagingRO paging;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String fullErrorCode;
@@ -65,14 +62,6 @@ public class ResultRO<Payload> implements Serializable {
 
 	public void setResult(Payload result) {
 		this.result = result;
-	}
-
-	public PagingRO getPaging() {
-		return paging;
-	}
-
-	public void setPaging(PagingRO paging) {
-		this.paging = paging;
 	}
 
 	public String getFullErrorCode() {

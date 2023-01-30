@@ -7,7 +7,7 @@ import dev.krud.crudframework.crud.handler.CrudHandler
 import dev.krud.crudframework.model.BaseCrudEntity
 import dev.krud.crudframework.modelfilter.DynamicModelFilter
 import dev.krud.crudframework.ro.BaseRO
-import dev.krud.crudframework.ro.PagingDTO
+import dev.krud.crudframework.ro.PagedResult
 import dev.krud.crudframework.web.ro.ManyCrudResult
 import dev.krud.crudframework.web.ro.ManyFailedReason
 import java.io.Serializable
@@ -39,7 +39,7 @@ class CrudRestServiceImpl(
         return crudHandler.index(filter, definition.clazz.java, definition.effectiveIndexRoClass().java).count()
     }
 
-    override fun index(resourceName: String, filter: DynamicModelFilter): PagingDTO<out Any> {
+    override fun index(resourceName: String, filter: DynamicModelFilter): PagedResult<out Any> {
         val definition = getCrudControllerDefinition(resourceName)
         if (!definition.annotation.actions.index) {
             throw CrudException("Index action is not allowed for resource $resourceName")

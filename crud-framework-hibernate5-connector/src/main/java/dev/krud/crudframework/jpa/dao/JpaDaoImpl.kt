@@ -64,11 +64,11 @@ class JpaDaoImpl : CrudDao {
 
     private fun setLimits(filter: DynamicModelFilter, query: TypedQuery<*>) {
         filter.start?.let {
-            query.firstResult = it
+            query.firstResult = it.toInt()
         }
 
         filter.limit?.let {
-            query.maxResults = it
+            query.maxResults = it.toInt()
         }
     }
 

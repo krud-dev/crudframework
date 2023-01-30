@@ -11,7 +11,7 @@ import dev.krud.crudframework.crud.hooks.interfaces.UpdateHooks
 import dev.krud.crudframework.jpa.lazyinitializer.annotation.InitializeLazyOn
 import dev.krud.crudframework.model.BaseCrudEntity
 import dev.krud.crudframework.modelfilter.DynamicModelFilter
-import dev.krud.crudframework.ro.PagingDTO
+import dev.krud.crudframework.ro.PagedResult
 import dev.krud.crudframework.util.ReflectionUtils
 
 class LazyInitializerPersistentHooks :
@@ -36,9 +36,9 @@ class LazyInitializerPersistentHooks :
         initializeLazyFields(entity) { it.create }
     }
 
-    override fun onIndex(filter: DynamicModelFilter, result: PagingDTO<BaseCrudEntity<Long>>) {
-        result.data ?: return
-        for (entity in result.data) {
+    override fun onIndex(filter: DynamicModelFilter, result: PagedResult<BaseCrudEntity<Long>>) {
+        result.results ?: return
+        for (entity in result.results) {
             initializeLazyFields(entity) { it.index }
         }
     }
