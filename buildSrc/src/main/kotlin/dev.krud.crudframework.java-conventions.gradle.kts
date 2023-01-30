@@ -4,6 +4,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 plugins {
     `java-library`
     kotlin("jvm")
+    kotlin("plugin.spring")
     id("org.springframework.boot")
 }
 
@@ -57,4 +58,8 @@ tasks.named<BootRun>("bootRun") {
 tasks.named<Jar>("jar") {
     enabled = true
     archiveClassifier.set("")
+}
+
+kotlin {
+    jvmToolchain(17)
 }

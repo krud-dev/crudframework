@@ -170,14 +170,14 @@ public class CrudHandlerImpl implements CrudHandler {
     @Override
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<Entity>> update(
             List<Entity> entities) {
-        return new MassUpdateCRUDRequestBuilder<>((context) -> crudUpdateHandler.updateManyTransactional(entities, context.getHooksDTO(), context.getPersistCopy(), context.getApplyPolicies()));
+        return new MassUpdateCRUDRequestBuilder<>((context) -> crudUpdateHandler.updateMany(entities, context.getHooksDTO(), context.getPersistCopy(), context.getApplyPolicies()));
     }
 
     @Override
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<RO>> update(
             List<Entity> entities, Class<RO> toClazz) {
         return new MassUpdateCRUDRequestBuilder<>((context) -> {
-            List<Entity> result = crudUpdateHandler.updateManyTransactional(entities, context.getHooksDTO(), context.getPersistCopy(), context.getApplyPolicies());
+            List<Entity> result = crudUpdateHandler.updateMany(entities, context.getHooksDTO(), context.getPersistCopy(), context.getApplyPolicies());
             return crudHelper.fillMany(result, toClazz);
         });
     }
@@ -185,14 +185,14 @@ public class CrudHandlerImpl implements CrudHandler {
     @Override
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<Entity>> updateByFilter(
             DynamicModelFilter filter, Class<Entity> entityClazz) {
-        return new MassUpdateCRUDRequestBuilder<>((context) -> crudUpdateHandler.updateByFilterTransactional(filter, entityClazz, context.getHooksDTO(), context.getPersistCopy(), context.getApplyPolicies()));
+        return new MassUpdateCRUDRequestBuilder<>((context) -> crudUpdateHandler.updateByFilter(filter, entityClazz, context.getHooksDTO(), context.getPersistCopy(), context.getApplyPolicies()));
     }
 
     @Override
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<RO>> updateByFilter(
             DynamicModelFilter filter, Class<Entity> entityClazz, Class<RO> toClazz) {
         return new MassUpdateCRUDRequestBuilder<>((context) -> {
-            List<Entity> result = crudUpdateHandler.updateByFilterTransactional(filter, entityClazz, context.getHooksDTO(), context.getPersistCopy(), context.getApplyPolicies());
+            List<Entity> result = crudUpdateHandler.updateByFilter(filter, entityClazz, context.getHooksDTO(), context.getPersistCopy(), context.getApplyPolicies());
             return crudHelper.fillMany(result, toClazz);
         });
     }

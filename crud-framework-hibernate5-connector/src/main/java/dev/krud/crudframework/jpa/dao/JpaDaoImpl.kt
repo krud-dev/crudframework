@@ -55,7 +55,9 @@ class JpaDaoImpl : CrudDao {
         val predicates = filter.filterFields
             .map { processFilterField(it, root) }
             .toTypedArray()
-        cq.where(*predicates)
+        if (predicates.isNotEmpty()) {
+            cq.where(*predicates)
+        }
         if (filter.orders.isNotEmpty()) {
             cq.orderBy(getOrders(filter, root))
         }

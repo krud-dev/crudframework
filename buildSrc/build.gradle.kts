@@ -14,6 +14,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.22")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0")
     implementation("org.springframework.boot:spring-boot-gradle-plugin:3.0.2")
+    implementation("org.jetbrains.kotlin:kotlin-allopen:1.8.0")
+
 }
