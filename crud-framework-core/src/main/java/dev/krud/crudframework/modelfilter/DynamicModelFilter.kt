@@ -1,8 +1,8 @@
 package dev.krud.crudframework.modelfilter
 
 class DynamicModelFilter(
-    var start: Int? = null,
-    var limit: Int? = null,
+    var start: Long? = null,
+    var limit: Long? = null,
     var orders: MutableSet<OrderDTO> = mutableSetOf(),
     val filterFields: MutableList<FilterField> = mutableListOf()
 ) {
@@ -37,14 +37,10 @@ class DynamicModelFilter(
     }
 
     override fun hashCode(): Int {
-        var result = start ?: 0
-        result = 31 * result + (limit ?: 0)
+        var result = start?.hashCode() ?: 0
+        result = 31 * result + (limit?.hashCode() ?: 0)
         result = 31 * result + orders.hashCode()
         result = 31 * result + filterFields.hashCode()
         return result
-    }
-
-    override fun toString(): String {
-        return "DynamicModelFilter(start=$start, limit=$limit, orders=$orders, cacheKey='$cacheKey', filterFields=$filterFields)"
     }
 }

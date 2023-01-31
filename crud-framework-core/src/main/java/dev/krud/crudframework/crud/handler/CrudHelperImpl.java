@@ -22,52 +22,58 @@ import dev.krud.crudframework.modelfilter.enums.FilterFieldDataType;
 import dev.krud.crudframework.modelfilter.enums.FilterFieldOperation;
 import dev.krud.crudframework.util.ReflectionUtils;
 import dev.krud.shapeshift.ShapeShift;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class CrudHelperImpl implements CrudHelper {
-    private Map<String, CrudCache> cacheMap = new HashMap<>();
+public class CrudHelperImpl implements CrudHelper, InitializingBean {
 
-    private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    /**
+     * Dependencies
+     */
+    private final List<CrudDao> crudDaos;
+    private final ApplicationContext applicationContext;
 
-    @Autowired(required = false)
-    private List<CrudDao> crudDaos = new ArrayList<>();
+    private final CacheManagerAdapter cacheManagerAdapter;
 
-    private Map<Class<? extends BaseCrudEntity<?>>, CrudDao> crudDaoMap = new HashMap<>();
+    private final ShapeShift shapeShift;
 
-    @Resource(name = "crudHelper")
-    private CrudHelper crudHelperProxy;
+    /**
+     * Others
+     */
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    private final Map<Class<? extends BaseCrudEntity<?>>, CrudDao> crudDaoMap = new HashMap<>();
 
-    private Map<Class<? extends BaseCrudEntity<?>>, EntityMetadataDTO> entityMetadataDTOs = new ConcurrentHashMap<>();
+    private final Map<Class<? extends BaseCrudEntity<?>>, EntityMetadataDTO> entityMetadataDTOs = new ConcurrentHashMap<>();
+
+    private final Map<String, CrudCache> cacheMap = new HashMap<>();
+
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     private CrudCache pagingCache;
 
-    @Autowired
-    private CacheManagerAdapter cacheManagerAdapter;
+    public CrudHelperImpl(@Autowired(required = false) List<CrudDao> crudDaos, ApplicationContext applicationContext, CacheManagerAdapter cacheManagerAdapter, ShapeShift shapeShift) {
+        this.crudDaos = crudDaos;
+        this.applicationContext = applicationContext;
+        this.cacheManagerAdapter = cacheManagerAdapter;
+        this.shapeShift = shapeShift;
+    }
 
-    @Autowired
-    private ShapeShift shapeShift;
-
-    @PostConstruct
-    private void init() {
+    @Override
+    public void afterPropertiesSet() throws Exception {
         pagingCache = cacheManagerAdapter.createCache("pagingCache",
                 new CrudCacheOptions(
                         60L,
@@ -289,7 +295,7 @@ public class CrudHelperImpl implements CrudHelper {
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> void evictEntityFromCache(Entity entity) {
         Objects.requireNonNull(entity, "entity cannot be null");
 
-        CrudCache cache = crudHelperProxy.getEntityCache(entity.getClass());
+        CrudCache cache = getEntityCache(entity.getClass());
 
         if (cache == null) {
             return;

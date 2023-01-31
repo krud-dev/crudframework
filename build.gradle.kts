@@ -1,21 +1,19 @@
-import org.jetbrains.dokka.gradle.DokkaTask
-
 plugins {
     `java-library`
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "1.6.0"
+    id("org.jetbrains.dokka") version "1.7.20"
 }
 
 if (hasProperty("release")) {
+    val releaseVersion = extra["crudframework.version"].toString()
     subprojects {
         apply(plugin = "java-library")
         apply(plugin = "signing")
         apply(plugin = "maven-publish")
         apply(plugin = "org.jetbrains.dokka")
         group = "dev.krud"
-        version = extra["crudframework.version"] ?: error("crudframework.version is not set")
-        java.sourceCompatibility = JavaVersion.VERSION_11
+        version = releaseVersion
         val isSnapshot = version.toString().endsWith("-SNAPSHOT")
         val repoUri = if (isSnapshot) {
             "https://s01.oss.sonatype.org/content/repositories/snapshots/"
@@ -49,6 +47,7 @@ if (hasProperty("release")) {
         publishing {
             publications.create<MavenPublication>("maven") {
                 from(components["java"])
+                this.version = releaseVersion
                 repositories {
                     mavenLocal()
                     maven {
@@ -92,7 +91,7 @@ if (hasProperty("release")) {
         if (!isSnapshot) {
             val javadocTask = tasks.named<Javadoc>("javadoc").get()
 
-            tasks.withType<DokkaTask> {
+            tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
                 javadocTask.dependsOn(this)
                 outputDirectory.set(javadocTask.destinationDir)
             }

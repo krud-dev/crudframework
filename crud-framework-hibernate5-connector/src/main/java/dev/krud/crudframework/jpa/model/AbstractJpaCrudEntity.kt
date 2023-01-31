@@ -4,10 +4,10 @@ import dev.krud.shapeshift.resolver.annotation.MappedField
 import dev.krud.crudframework.jpa.annotation.JpaCrudEntity
 import dev.krud.crudframework.jpa.ro.AbstractJpaCrudRO
 import dev.krud.crudframework.model.BaseCrudEntity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.MappedSuperclass
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.MappedSuperclass
 
 @MappedSuperclass
 @JpaCrudEntity

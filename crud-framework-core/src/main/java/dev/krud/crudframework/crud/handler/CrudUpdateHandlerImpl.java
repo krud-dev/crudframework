@@ -19,7 +19,7 @@ import dev.krud.crudframework.modelfilter.DynamicModelFilter;
 import dev.krud.crudframework.modelfilter.FilterFields;
 import dev.krud.crudframework.modelfilter.enums.FilterFieldDataType;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,19 +31,19 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 	@Autowired
 	private CrudHelper crudHelper;
 
-	@Resource(name = "crudUpdateHandler")
-	private CrudUpdateHandler crudUpdateHandlerProxy;
+	@Autowired
+	private CrudUpdateTransactionalHandler crudUpdateTransactionalHandler;
 
 	@Autowired
 	private CrudSecurityHandler crudSecurityHandler;
 
 	@Override
 	@Transactional(readOnly = false)
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> updateManyTransactional(List<Entity> entities,
-																											 HooksDTO<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>> hooks, Boolean persistCopy, boolean applyPolicies) {
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> updateMany(List<Entity> entities,
+																								HooksDTO<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>> hooks, Boolean persistCopy, boolean applyPolicies) {
 		List<Entity> finalEntityList = new ArrayList<>();
 		for(Entity entity : entities) {
-			finalEntityList.add(crudUpdateHandlerProxy.updateInternal(entity, hooks, applyPolicies));
+			finalEntityList.add(updateInternal(entity, hooks, applyPolicies));
 		}
 
 		return finalEntityList;
@@ -51,10 +51,10 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 
 	@Override
 	@Transactional(readOnly = false)
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> updateByFilterTransactional(DynamicModelFilter filter, Class<Entity> entityClazz,
-																												 HooksDTO<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>> hooks, Boolean persistCopy, boolean applyPolicies) {
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> updateByFilter(DynamicModelFilter filter, Class<Entity> entityClazz,
+																									HooksDTO<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>> hooks, Boolean persistCopy, boolean applyPolicies) {
 		List<Entity> entities = crudHelper.getEntities(filter, entityClazz, persistCopy);
-		return crudUpdateHandlerProxy.updateManyTransactional(entities, hooks, persistCopy, applyPolicies);
+		return updateMany(entities, hooks, persistCopy, applyPolicies);
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 			preHook.run(entity);
 		}
 
-		entity = crudUpdateHandlerProxy.updateTransactional(entity, filter, hooks.getOnHooks(), applyPolicies);
+		entity = crudUpdateTransactionalHandler.updateTransactional(entity, filter, hooks.getOnHooks(), applyPolicies);
 
 		crudHelper.evictEntityFromCache(entity);
 
@@ -98,29 +98,6 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 		}
 
 		return entity;
-	}
-
-	@Override
-	@Transactional(readOnly = false)
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateTransactional(Entity entity, DynamicModelFilter filter, List<CRUDOnUpdateHook<ID, Entity>> onHooks, boolean applyPolicies) {
-		// check id exists and has access to entity
-		Entity existingEntity = crudHelper.getEntity(filter, (Class<Entity>) entity.getClass(), true);
-
-		if (existingEntity == null) {
-			throw new CrudUpdateException("Entity of type [ " + entity.getClass().getSimpleName() + " ] does not exist or cannot be updated");
-		}
-
-		if (applyPolicies) {
-			crudSecurityHandler.evaluatePostRulesAndThrow(existingEntity, PolicyRuleType.CAN_UPDATE, entity.getClass());
-		}
-
-		for(CRUDOnUpdateHook<ID, Entity> onHook : onHooks) {
-			onHook.run(entity);
-		}
-
-		crudHelper.validate(entity);
-
-		return crudHelper.getCrudDaoForEntity(entity.getClass()).saveOrUpdate(entity);
 	}
 
 	@Override
@@ -151,7 +128,7 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 
 		crudHelper.validate(object);
 
-		Entity entity = crudUpdateHandlerProxy.updateFromTransactional(filter, object, clazz, hooks.getOnHooks(), applyPolicies);
+		Entity entity = crudUpdateTransactionalHandler.updateFromTransactional(filter, object, clazz, hooks.getOnHooks(), applyPolicies);
 
 		crudHelper.evictEntityFromCache(entity);
 
@@ -160,30 +137,6 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 		}
 
 		return entity;
-	}
-
-	@Override
-	@Transactional(readOnly = false)
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateFromTransactional(DynamicModelFilter filter, Object object, Class<Entity> clazz, List<CRUDOnUpdateFromHook<ID, Entity>> onHooks, boolean applyPolicies) {
-		Entity entity = crudHelper.getEntity(filter, clazz, null);
-
-		if(entity == null) {
-			throw new CrudUpdateException("Entity of type [ " + clazz.getSimpleName() + " ] does not exist or cannot be updated");
-		}
-
-		if (applyPolicies) {
-			crudSecurityHandler.evaluatePostRulesAndThrow(entity, PolicyRuleType.CAN_UPDATE, clazz);
-		}
-
-		crudHelper.fill(object, entity);
-
-		for(CRUDOnUpdateFromHook<ID, Entity> onHook : onHooks) {
-			onHook.run(entity, object);
-		}
-
-		crudHelper.validate(entity);
-
-		return crudHelper.getCrudDaoForEntity(clazz).saveOrUpdate(entity);
 	}
 
 

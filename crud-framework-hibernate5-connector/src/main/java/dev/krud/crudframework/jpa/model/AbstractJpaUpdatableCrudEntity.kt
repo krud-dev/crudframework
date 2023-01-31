@@ -4,23 +4,27 @@ import dev.krud.shapeshift.resolver.annotation.MappedField
 import org.hibernate.annotations.CreationTimestamp
 import dev.krud.crudframework.jpa.ro.AbstractJpaUpdatableCrudRO
 import java.util.Date
-import javax.persistence.Column
-import javax.persistence.MappedSuperclass
-import javax.persistence.Temporal
-import javax.persistence.TemporalType
-import javax.persistence.Version
+import jakarta.persistence.Column
+import jakarta.persistence.MappedSuperclass
+import jakarta.persistence.Temporal
+import jakarta.persistence.TemporalType
+import jakarta.persistence.Version
+import java.time.LocalDate
 
 @MappedSuperclass
 abstract class AbstractJpaUpdatableCrudEntity : AbstractJpaCrudEntity() {
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    @Column
+    @Column(nullable = false)
     @MappedField(target = AbstractJpaUpdatableCrudRO::class)
-    val creationTime: Date = Date()
+    val creationTime: LocalDate = LocalDate.now()
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column
-    @Version
+    @Column(nullable = false)
     @MappedField(target = AbstractJpaUpdatableCrudRO::class)
-    var lastUpdateTime: Date = Date()
+    var lastUpdateTime: LocalDate = LocalDate.now()
+
+    @Version
+    @Column(nullable = false)
+    var version: Long? = null
 }

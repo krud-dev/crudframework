@@ -15,7 +15,7 @@ dependencies {
     implementation("org.aspectj:aspectjweaver")
     implementation("org.hibernate.validator:hibernate-validator")
     implementation("com.github.tomas-langer:chalk")
-    compileOnly("net.sf.ehcache:ehcache")
+    compileOnly("net.sf.ehcache:ehcache:2.10.9.2")
 }
 
 description = "crud-framework-core"

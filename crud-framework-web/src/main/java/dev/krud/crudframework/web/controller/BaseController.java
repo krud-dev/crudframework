@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import dev.krud.crudframework.crud.exception.CrudException;
-import dev.krud.crudframework.ro.PagingDTO;
+import dev.krud.crudframework.ro.PagedResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +32,8 @@ public class BaseController {
             if (data instanceof ResultRO) {
                 return (ResultRO) data;
             }
-            if (data instanceof PagingDTO) {
-                resultRO.setPaging(((PagingDTO) data).getPagingRO());
-                resultRO.setResult(((PagingDTO) data).getData());
+            if (data instanceof PagedResult) {
+                resultRO.setResult(((PagedResult) data).getResults());
             } else {
                 resultRO.setResult(data);
             }

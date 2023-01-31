@@ -18,7 +18,7 @@ import dev.krud.crudframework.modelfilter.DynamicModelFilter;
 import dev.krud.crudframework.ro.BaseRO;
 import dev.krud.crudframework.web.ro.ManyCrudResult;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;

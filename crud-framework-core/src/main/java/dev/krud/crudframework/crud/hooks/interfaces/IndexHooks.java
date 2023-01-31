@@ -5,7 +5,7 @@ import dev.krud.crudframework.crud.model.ReadCRUDRequestBuilder;
 import org.jetbrains.annotations.NotNull;
 import dev.krud.crudframework.model.BaseCrudEntity;
 import dev.krud.crudframework.modelfilter.DynamicModelFilter;
-import dev.krud.crudframework.ro.PagingDTO;
+import dev.krud.crudframework.ro.PagedResult;
 
 import java.io.Serializable;
 
@@ -31,7 +31,7 @@ public interface IndexHooks<ID extends Serializable, Entity extends BaseCrudEnti
 	 * @param filter the filter used in the operation
 	 * @param result represents the paginated list of results from the given filter for the give entity
 	 */
-	default void onIndex(@NotNull DynamicModelFilter filter, @NotNull PagingDTO<Entity> result) {
+	default void onIndex(@NotNull DynamicModelFilter filter, @NotNull PagedResult<Entity> result) {
 	}
 
 	/**
@@ -39,6 +39,6 @@ public interface IndexHooks<ID extends Serializable, Entity extends BaseCrudEnti
 	 * @param filter the filter used in the operation
 	 * @param result represents the paginated list of results from the given filter for the give entity
 	 */
-	default void postIndex(@NotNull DynamicModelFilter filter, @NotNull PagingDTO<Entity> result) {
+	default void postIndex(@NotNull DynamicModelFilter filter, @NotNull PagedResult<Entity> result) {
 	}
 }

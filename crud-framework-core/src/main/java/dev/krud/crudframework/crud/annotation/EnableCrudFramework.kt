@@ -1,9 +1,8 @@
 package dev.krud.crudframework.crud.annotation
 
-import org.springframework.context.annotation.Import
 import dev.krud.crudframework.crud.configuration.CrudCacheConfiguration
 import dev.krud.crudframework.crud.configuration.CrudFrameworkConfiguration
-import dev.krud.crudframework.util.startup.annotation.EnablePostStartup
+import org.springframework.context.annotation.Import
 
 /**
  * Used to enable the framework
@@ -12,5 +11,4 @@ import dev.krud.crudframework.util.startup.annotation.EnablePostStartup
  */
 @Target(AnnotationTarget.CLASS)
 @Import(CrudFrameworkConfiguration::class, CrudCacheConfiguration::class)
-@EnablePostStartup
 annotation class EnableCrudFramework

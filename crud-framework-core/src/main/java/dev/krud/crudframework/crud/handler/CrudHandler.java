@@ -30,40 +30,9 @@ import dev.krud.crudframework.crud.model.ReadCRUDRequestBuilder;
 import dev.krud.crudframework.crud.model.UpdateCRUDRequestBuilder;
 import dev.krud.crudframework.model.BaseCrudEntity;
 import dev.krud.crudframework.modelfilter.DynamicModelFilter;
-import dev.krud.crudframework.ro.PagingDTO;
+import dev.krud.crudframework.ro.PagedResult;
 import dev.krud.crudframework.crud.annotation.DeleteColumn;
 import dev.krud.crudframework.crud.annotation.Deleteable;
-import dev.krud.crudframework.crud.hooks.create.CRUDOnCreateHook;
-import dev.krud.crudframework.crud.hooks.create.CRUDPostCreateHook;
-import dev.krud.crudframework.crud.hooks.create.CRUDPreCreateHook;
-import dev.krud.crudframework.crud.hooks.create.from.CRUDOnCreateFromHook;
-import dev.krud.crudframework.crud.hooks.create.from.CRUDPostCreateFromHook;
-import dev.krud.crudframework.crud.hooks.create.from.CRUDPreCreateFromHook;
-import dev.krud.crudframework.crud.hooks.delete.CRUDOnDeleteHook;
-import dev.krud.crudframework.crud.hooks.delete.CRUDPostDeleteHook;
-import dev.krud.crudframework.crud.hooks.delete.CRUDPreDeleteHook;
-import dev.krud.crudframework.crud.hooks.index.CRUDOnIndexHook;
-import dev.krud.crudframework.crud.hooks.index.CRUDPostIndexHook;
-import dev.krud.crudframework.crud.hooks.index.CRUDPreIndexHook;
-import dev.krud.crudframework.crud.hooks.show.CRUDOnShowHook;
-import dev.krud.crudframework.crud.hooks.show.CRUDPostShowHook;
-import dev.krud.crudframework.crud.hooks.show.CRUDPreShowHook;
-import dev.krud.crudframework.crud.hooks.show.by.CRUDOnShowByHook;
-import dev.krud.crudframework.crud.hooks.show.by.CRUDPostShowByHook;
-import dev.krud.crudframework.crud.hooks.show.by.CRUDPreShowByHook;
-import dev.krud.crudframework.crud.hooks.update.CRUDOnUpdateHook;
-import dev.krud.crudframework.crud.hooks.update.CRUDPostUpdateHook;
-import dev.krud.crudframework.crud.hooks.update.CRUDPreUpdateHook;
-import dev.krud.crudframework.crud.hooks.update.from.CRUDOnUpdateFromHook;
-import dev.krud.crudframework.crud.hooks.update.from.CRUDPostUpdateFromHook;
-import dev.krud.crudframework.crud.hooks.update.from.CRUDPreUpdateFromHook;
-import dev.krud.crudframework.crud.model.CRUDRequestBuilder;
-import dev.krud.crudframework.crud.model.MassUpdateCRUDRequestBuilder;
-import dev.krud.crudframework.crud.model.ReadCRUDRequestBuilder;
-import dev.krud.crudframework.crud.model.UpdateCRUDRequestBuilder;
-import dev.krud.crudframework.model.BaseCrudEntity;
-import dev.krud.crudframework.modelfilter.DynamicModelFilter;
-import dev.krud.crudframework.ro.PagingDTO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -81,7 +50,7 @@ public interface CrudHandler {
      * @param clazz    the entity class
      * @return {@link ReadCRUDRequestBuilder} use {@link CRUDRequestBuilder#execute()} to run the request
      */
-    <ID extends Serializable, Entity extends BaseCrudEntity<ID>> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity>, CRUDOnIndexHook<ID, Entity>, CRUDPostIndexHook<ID, Entity>, PagingDTO<Entity>> index(
+    <ID extends Serializable, Entity extends BaseCrudEntity<ID>> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity>, CRUDOnIndexHook<ID, Entity>, CRUDPostIndexHook<ID, Entity>, PagedResult<Entity>> index(
             DynamicModelFilter filter, Class<Entity> clazz);
 
     /**
@@ -94,7 +63,7 @@ public interface CrudHandler {
      * @param toClazz  the return object class
      * @return {@link ReadCRUDRequestBuilder} use {@link CRUDRequestBuilder#execute()} to run the request
      */
-    <ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity>, CRUDOnIndexHook<ID, Entity>, CRUDPostIndexHook<ID, Entity>, PagingDTO<RO>> index(
+    <ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity>, CRUDOnIndexHook<ID, Entity>, CRUDPostIndexHook<ID, Entity>, PagedResult<RO>> index(
             DynamicModelFilter filter, Class<Entity> clazz, Class<RO> toClazz);
 
     /**

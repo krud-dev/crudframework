@@ -8,7 +8,6 @@ plugins {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.hibernate:hibernate-core")
     implementation(project(":crud-framework-core"))
     implementation("dev.krud:shapeshift")
     implementation("dev.krud:spring-boot-starter-shapeshift")

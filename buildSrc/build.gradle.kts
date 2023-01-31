@@ -7,13 +7,15 @@ plugins {
     `kotlin-dsl`
 }
 
+
 repositories {
     // Use the plugin portal to apply community plugins in convention plugins.
     gradlePluginPortal()
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0")
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:2.6.7")
-    implementation("org.jetbrains.kotlin:kotlin-allopen:1.6.0")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:3.0.2")
+    implementation("org.jetbrains.kotlin:kotlin-allopen:1.8.0")
+
 }
