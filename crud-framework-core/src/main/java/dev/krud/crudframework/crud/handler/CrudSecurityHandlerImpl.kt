@@ -56,7 +56,10 @@ internal class CrudSecurityHandlerImpl(
         )
     }
 
-    override fun evaluatePostRules(entity: PersistentEntity, type: PolicyRuleType, clazz: Class<out PersistentEntity>): MultiPolicyResult {
+    override fun evaluatePostRules(entity: PersistentEntity?, type: PolicyRuleType, clazz: Class<out PersistentEntity>): MultiPolicyResult {
+        if (entity == null) {
+            return MultiPolicyResult(clazz, true, emptyList())
+        }
         val results = getPolicies(clazz).map { it.evaluatePostRules(entity, type, principalProvider.getObject().getPrincipal()) }
         return MultiPolicyResult(clazz, results.all { it.success }, results)
     }
