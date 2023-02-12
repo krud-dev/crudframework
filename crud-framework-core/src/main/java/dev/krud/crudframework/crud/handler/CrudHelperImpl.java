@@ -195,6 +195,8 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
             return FilterFieldDataType.Boolean;
         } else if (Enum.class.isAssignableFrom(clazz)) {
             return FilterFieldDataType.Enum;
+        } else if (UUID.class.equals(clazz)) {
+            return FilterFieldDataType.UUID;
         }
 
         return FilterFieldDataType.Object;

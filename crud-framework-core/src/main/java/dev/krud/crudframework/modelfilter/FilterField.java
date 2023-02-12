@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -180,6 +181,8 @@ public class FilterField implements Serializable {
 				} catch(IllegalArgumentException e) {
 					throw new RuntimeException("Could not find value [ " + field.toString() + " ] in enum [ " + enumType + " ]");
 				}
+            case UUID:
+                return UUID.fromString(field.toString());
 			default:
 				return field;
 		}
