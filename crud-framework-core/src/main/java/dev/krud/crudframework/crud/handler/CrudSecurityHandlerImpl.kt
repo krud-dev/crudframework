@@ -11,12 +11,13 @@ import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import java.security.Principal
+import java.util.concurrent.ConcurrentHashMap
 
 internal class CrudSecurityHandlerImpl(
     private val policies: ObjectProvider<Policy<PersistentEntity>>,
     private val principalProvider: ObjectProvider<PrincipalProvider>
 ) : CrudSecurityHandler, InitializingBean {
-    private val policyMap = mutableMapOf<Class<*>, MutableList<Policy<PersistentEntity>>>()
+    private val policyMap = ConcurrentHashMap<Class<*>, MutableList<Policy<PersistentEntity>>>()
     @Autowired
     private lateinit var applicationContext: ApplicationContext
 

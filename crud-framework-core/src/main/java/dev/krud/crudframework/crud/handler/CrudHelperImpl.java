@@ -55,7 +55,7 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
      * Others
      */
 
-    private final Map<Class<? extends BaseCrudEntity<?>>, CrudDao> crudDaoMap = new HashMap<>();
+    private final Map<Class<? extends BaseCrudEntity<?>>, CrudDao> crudDaoMap = new ConcurrentHashMap<>();
 
     private final Map<Class<? extends BaseCrudEntity<?>>, EntityMetadataDTO> entityMetadataDTOs = new ConcurrentHashMap<>();
 
