@@ -136,7 +136,7 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> void validateAndFillFilterFieldMetadata(List<FilterField> filterFields, Class<Entity> entityClazz) {
         EntityMetadataDTO metadataDTO = getEntityMetadata(entityClazz);
         for (FilterField filterField : filterFields) {
-            if (filterField.isValidated()) {
+            if (filterField.validated()) {
                 continue;
             }
             if (filterField.getOperation() == null) {

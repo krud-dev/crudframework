@@ -113,10 +113,10 @@ public abstract class AbstractMongoBaseDao {
 
 			switch(filterField.getOperation()) {
 				case Equal:
-					criteria.and(filterField.getFieldName()).is(filterField.getValue1());
+					criteria.and(filterField.getFieldName()).is(filterField.value1());
 					break;
 				case NotEqual:
-					criteria.and(filterField.getFieldName()).ne(filterField.getValue1());
+					criteria.and(filterField.getFieldName()).ne(filterField.value1());
 					break;
 				case In:
 					criteria.and(filterField.getFieldName()).in(filterField.getValues());
@@ -125,26 +125,26 @@ public abstract class AbstractMongoBaseDao {
 					criteria.and(filterField.getFieldName()).nin(filterField.getValues());
 					break;
 				case GreaterEqual:
-					criteria.and(filterField.getFieldName()).gte(filterField.getValue1());
+					criteria.and(filterField.getFieldName()).gte(filterField.value1());
 					break;
 				case GreaterThan:
-					criteria.and(filterField.getFieldName()).gt(filterField.getValue1());
+					criteria.and(filterField.getFieldName()).gt(filterField.value1());
 					break;
 				case LowerEqual:
-					criteria.and(filterField.getFieldName()).lte(filterField.getValue1());
+					criteria.and(filterField.getFieldName()).lte(filterField.value1());
 					break;
 				case LowerThan:
-					criteria.and(filterField.getFieldName()).lt(filterField.getValue1());
+					criteria.and(filterField.getFieldName()).lt(filterField.value1());
 					break;
 				case Between:
 					criteria.and(filterField.getFieldName())
-									.gte(filterField.getValue1())
+									.gte(filterField.value1())
 									.and(filterField.getFieldName())
-									.lte(filterField.getValue2());
+									.lte(filterField.value2());
 					break;
 				case Contains:
-					if(filterField.getValue1() != null && !filterField.getValue1().toString().trim().isEmpty()) {
-						criteria.and(filterField.getFieldName()).regex(Pattern.compile(filterField.getValue1().toString(), Pattern.LITERAL & Pattern.CASE_INSENSITIVE));
+					if(filterField.value1() != null && !filterField.value1().toString().trim().isEmpty()) {
+						criteria.and(filterField.getFieldName()).regex(Pattern.compile(filterField.value1().toString(), Pattern.LITERAL & Pattern.CASE_INSENSITIVE));
 					}
 					break;
 				case IsNull:

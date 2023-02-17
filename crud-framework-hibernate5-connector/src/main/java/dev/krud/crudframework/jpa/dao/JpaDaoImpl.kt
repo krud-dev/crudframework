@@ -91,59 +91,59 @@ class JpaDaoImpl : CrudDao {
     private fun CriteriaBuilder.processFilterField(filterField: FilterField, root: Root<*>): Predicate {
         val predicate: Predicate = when (filterField.operation) {
             FilterFieldOperation.Equal -> {
-                equal(root.getExpressionByFieldName(filterField.fieldName), filterField.value1)
+                equal(root.getExpressionByFieldName(filterField.fieldName), filterField.value1())
             }
 
             FilterFieldOperation.NotEqual -> {
-                notEqual(root.getExpressionByFieldName(filterField.fieldName), filterField.value1)
+                notEqual(root.getExpressionByFieldName(filterField.fieldName), filterField.value1())
             }
 
             FilterFieldOperation.In -> {
-                `in`(root.getExpressionByFieldName(filterField.fieldName)).value(filterField.value1)
+                `in`(root.getExpressionByFieldName(filterField.fieldName)).value(filterField.value1())
             }
 
             FilterFieldOperation.NotIn -> {
-                not(`in`(root.getExpressionByFieldName(filterField.fieldName)).value(filterField.value1))
+                not(`in`(root.getExpressionByFieldName(filterField.fieldName)).value(filterField.value1()))
             }
 
             FilterFieldOperation.GreaterThan -> {
                 greaterThan(
                     root.getExpressionByFieldName(filterField.fieldName) as Expression<out Comparable<Any>>,
-                    filterField.value1 as Comparable<Any>
+                    filterField.value1() as Comparable<Any>
                 );
             }
 
             FilterFieldOperation.GreaterEqual -> {
                 greaterThanOrEqualTo(
                     root.getExpressionByFieldName(filterField.fieldName) as Expression<out Comparable<Any>>,
-                    filterField.value1 as Comparable<Any>
+                    filterField.value1() as Comparable<Any>
                 )
             }
 
             FilterFieldOperation.LowerThan -> {
                 lessThan(
                     root.getExpressionByFieldName(filterField.fieldName) as Expression<out Comparable<Any>>,
-                    filterField.value1 as Comparable<Any>
+                    filterField.value1() as Comparable<Any>
                 )
             }
 
             FilterFieldOperation.LowerEqual -> {
                 lessThanOrEqualTo(
                     root.getExpressionByFieldName(filterField.fieldName) as Expression<out Comparable<Any>>,
-                    filterField.value1 as Comparable<Any>
+                    filterField.value1() as Comparable<Any>
                 )
             }
 
             FilterFieldOperation.Between -> {
                 between(
                     root.getExpressionByFieldName(filterField.fieldName) as Expression<out Comparable<Any>>,
-                    filterField.value1 as Comparable<Any>,
-                    filterField.value2 as Comparable<Any>
+                    filterField.value1() as Comparable<Any>,
+                    filterField.value2() as Comparable<Any>
                 )
             }
 
             FilterFieldOperation.Contains -> {
-                like(root.getExpressionByFieldName(filterField.fieldName) as Path<String>, "%${filterField.value1}%")
+                like(root.getExpressionByFieldName(filterField.fieldName) as Path<String>, "%${filterField.value1()}%")
             }
 
             FilterFieldOperation.IsNull -> {

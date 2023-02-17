@@ -3,6 +3,8 @@ package dev.krud.crudframework.modelfilter;
 import dev.krud.crudframework.modelfilter.enums.FilterFieldDataType;
 import dev.krud.crudframework.modelfilter.enums.FilterFieldOperation;
 
+import jakarta.annotation.Nullable;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
@@ -16,19 +18,24 @@ import java.util.stream.Collectors;
  */
 public class FilterField implements Serializable {
 
+    @Nullable
 	private String fieldName;
 
 	private FilterFieldOperation operation;
 
+    @Nullable
 	private FilterFieldDataType dataType;
 
+    @Nullable
 	private String enumType;
 
+    @Nullable
 	private Object[] values;
 
+    @Nullable
 	private List<FilterField> children;
 
-	private transient boolean validated = false;
+	private boolean validated = false;
 
 	public FilterField() {
 	}
@@ -63,11 +70,12 @@ public class FilterField implements Serializable {
 		this.values = values;
 	}
 
+    @Nullable
 	public String getFieldName() {
 		return fieldName;
 	}
 
-	public void setFieldName(String fieldName) {
+	public void setFieldName(@Nullable String fieldName) {
 		this.fieldName = fieldName;
 	}
 
@@ -79,27 +87,30 @@ public class FilterField implements Serializable {
 		this.operation = operation;
 	}
 
-	public FilterFieldDataType getDataType() {
+    @Nullable
+    public FilterFieldDataType getDataType() {
 		return dataType;
 	}
 
-	public void setDataType(FilterFieldDataType dataType) {
+	public void setDataType(@Nullable FilterFieldDataType dataType) {
 		this.dataType = dataType;
 	}
 
-	public String getEnumType() {
+    @Nullable
+    public String getEnumType() {
 		return enumType;
 	}
 
-	public void setEnumType(String enumType) {
+	public void setEnumType(@Nullable String enumType) {
 		this.enumType = enumType;
 	}
 
-	public boolean isValidated() {
+	public boolean validated() {
 		return validated;
 	}
 
-	public Object[] getValues() {
+    @Nullable
+    public Object[] getValues() {
 		if(values != null) {
 			return Arrays.stream(values).map(x -> castToType(x)).collect(Collectors.toList()).toArray();
 		}
@@ -107,11 +118,20 @@ public class FilterField implements Serializable {
 		return null;
 	}
 
-	public void setValues(Object[] values) {
+	public void setValues(@Nullable Object[] values) {
 		this.values = values;
 	}
 
-	public Object getValue1() {
+    @Nullable
+    public List<FilterField> getChildren() {
+        return children;
+    }
+
+    public void setChildren(@Nullable List<FilterField> children) {
+        this.children = children;
+    }
+
+	public Object value1() {
 		if(values == null || values.length == 0) {
 			return null;
 		}
@@ -119,20 +139,12 @@ public class FilterField implements Serializable {
 		return castToType(values[0]);
 	}
 
-	public Object getValue2() {
+	public Object value2() {
 		if(values == null || values.length < 2) {
 			return null;
 		}
 
 		return castToType(values[1]);
-	}
-
-	public List<FilterField> getChildren() {
-		return children;
-	}
-
-	public void setChildren(List<FilterField> children) {
-		this.children = children;
 	}
 
 	public void validate() {

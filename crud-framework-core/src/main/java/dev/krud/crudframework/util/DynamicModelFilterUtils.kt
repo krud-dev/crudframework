@@ -58,46 +58,46 @@ fun FilterField.filtersMatch(target: Any): Boolean {
     }
     when (this.operation) {
         FilterFieldOperation.Equal -> {
-            return actualValue == this.value1
+            return actualValue == this.value1()
         }
         FilterFieldOperation.NotEqual -> {
-            return actualValue != this.value1
+            return actualValue != this.value1()
         }
         FilterFieldOperation.In -> {
-            return this.value1 in actualValue as Collection<*>
+            return this.value1() in actualValue as Collection<*>
         }
         FilterFieldOperation.NotIn -> {
-            return this.value1 !in actualValue as Collection<*>
+            return this.value1() !in actualValue as Collection<*>
         }
         FilterFieldOperation.GreaterThan -> {
             actualValue as Comparable<Any>
-            val value = this.value1 as Comparable<Any>
+            val value = this.value1() as Comparable<Any>
             return actualValue > value
         }
         FilterFieldOperation.GreaterEqual -> {
             actualValue as Comparable<Any>
-            val value = this.value1 as Comparable<Any>
+            val value = this.value1() as Comparable<Any>
             return actualValue >= value
         }
         FilterFieldOperation.LowerThan -> {
             actualValue as Comparable<Any>
-            val value = this.value1 as Comparable<Any>
+            val value = this.value1() as Comparable<Any>
             return actualValue < value
         }
         FilterFieldOperation.LowerEqual -> {
             actualValue as Comparable<Any>
-            val value = this.value1 as Comparable<Any>
+            val value = this.value1() as Comparable<Any>
             return actualValue <= value
         }
         FilterFieldOperation.Between -> {
             actualValue as Comparable<Any>
-            val value1 = this.value1 as Comparable<Any>
-            val value2 = this.value2 as Comparable<Any>
+            val value1 = this.value1() as Comparable<Any>
+            val value2 = this.value2() as Comparable<Any>
             return actualValue >= value1 && actualValue < value2
         }
         FilterFieldOperation.Contains -> {
             actualValue as String
-            val value = this.value1 as String
+            val value = this.value1() as String
             return actualValue.contains(value)
         }
         FilterFieldOperation.IsNull -> {
@@ -107,11 +107,11 @@ fun FilterField.filtersMatch(target: Any): Boolean {
             return actualValue != null
         }
         FilterFieldOperation.IsEmpty -> {
-            val value = this.value1 as Collection<*>
+            val value = this.value1() as Collection<*>
             return value.isEmpty()
         }
         FilterFieldOperation.IsNotEmpty -> {
-            val value = this.value1 as Collection<*>
+            val value = this.value1() as Collection<*>
             return value.isNotEmpty()
         }
         FilterFieldOperation.And -> {
