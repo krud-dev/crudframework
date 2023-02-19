@@ -245,11 +245,6 @@ public class CrudHandlerImpl implements CrudHandler {
     }
 
     @Override
-    public void validate(Object target) {
-        crudHelper.validate(target);
-    }
-
-    @Override
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> void validateFilter(DynamicModelFilter filter, Class<Entity> clazz) {
         crudHelper.validateAndFillFilterFieldMetadata(filter.getFilterFields(), clazz);
     }

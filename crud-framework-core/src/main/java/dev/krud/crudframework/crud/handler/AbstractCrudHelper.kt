@@ -83,10 +83,6 @@ abstract class AbstractCrudHelper : CrudHelper {
         throw UnsupportedOperationException()
     }
 
-    override fun validate(target: Any?) {
-        throw UnsupportedOperationException()
-    }
-
     override fun <From : Any?, To : Any?> fill(fromObject: From, toClazz: Class<To>): To {
         throw UnsupportedOperationException()
     }

@@ -48,8 +48,6 @@ public interface CrudHelper {
 
     <ID extends Serializable, Entity extends BaseCrudEntity<ID>> CrudCache getEntityCache(Class<Entity> clazz);
 
-    void validate(Object target);
-
 
     <From, To> To fill(From fromObject, Class<To> toClazz);
 

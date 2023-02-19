@@ -212,13 +212,6 @@ public interface CrudHandler {
 
 
     /**
-     * Runs field validation on {@code target}, throwing an exception with violations if the validation failed
-     *
-     * @param target
-     */
-    void validate(Object target);
-
-    /**
      * Validate a filter against an entity
      *
      * @param filter the filter

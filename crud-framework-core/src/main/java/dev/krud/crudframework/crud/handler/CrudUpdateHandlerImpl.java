@@ -1,7 +1,5 @@
 package dev.krud.crudframework.crud.handler;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import dev.krud.crudframework.crud.exception.CrudUpdateException;
 import dev.krud.crudframework.crud.hooks.HooksDTO;
 import dev.krud.crudframework.crud.hooks.interfaces.UpdateFromHooks;
@@ -18,8 +16,9 @@ import dev.krud.crudframework.model.BaseCrudEntity;
 import dev.krud.crudframework.modelfilter.DynamicModelFilter;
 import dev.krud.crudframework.modelfilter.FilterFields;
 import dev.krud.crudframework.modelfilter.enums.FilterFieldDataType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.Resource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,8 +124,6 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 		for(CRUDPreUpdateFromHook<ID, Entity> preHook : hooks.getPreHooks()) {
 			preHook.run(id, object);
 		}
-
-		crudHelper.validate(object);
 
 		Entity entity = crudUpdateTransactionalHandler.updateFromTransactional(filter, object, clazz, hooks.getOnHooks(), applyPolicies);
 

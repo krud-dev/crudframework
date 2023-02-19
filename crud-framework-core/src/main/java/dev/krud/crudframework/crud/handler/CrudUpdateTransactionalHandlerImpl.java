@@ -39,8 +39,6 @@ public class CrudUpdateTransactionalHandlerImpl implements CrudUpdateTransaction
             onHook.run(entity);
         }
 
-        crudHelper.validate(entity);
-
         return crudHelper.getCrudDaoForEntity(entity.getClass()).saveOrUpdate(entity);
     }
 
@@ -62,8 +60,6 @@ public class CrudUpdateTransactionalHandlerImpl implements CrudUpdateTransaction
         for (CRUDOnUpdateFromHook<ID, Entity> onHook : onHooks) {
             onHook.run(entity, object);
         }
-
-        crudHelper.validate(entity);
 
         return crudHelper.getCrudDaoForEntity(clazz).saveOrUpdate(entity);
     }
