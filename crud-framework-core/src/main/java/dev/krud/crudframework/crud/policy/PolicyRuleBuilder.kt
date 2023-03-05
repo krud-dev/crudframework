@@ -2,8 +2,6 @@ package dev.krud.crudframework.crud.policy
 
 import dev.krud.crudframework.crud.policy.PolicyElementLocation.Companion.toPolicyElementLocation
 import dev.krud.crudframework.model.PersistentEntity
-import dev.krud.crudframework.modelfilter.dsl.FilterFieldsBuilder
-import java.security.Principal
 
 class PolicyRuleBuilder<RootType : PersistentEntity>(private val name: String?, private val type: PolicyRuleType, private val location: PolicyElementLocation) {
     private val preConditions = mutableListOf<PolicyPreCondition>()

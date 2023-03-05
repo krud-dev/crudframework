@@ -1,10 +1,10 @@
 package dev.krud.crudframework.mongo.model
 
-import dev.krud.shapeshift.resolver.annotation.MappedField
-import org.springframework.data.annotation.Id
 import dev.krud.crudframework.model.BaseCrudEntity
 import dev.krud.crudframework.mongo.annotation.MongoCrudEntity
 import dev.krud.crudframework.mongo.ro.BaseMongoRO
+import dev.krud.shapeshift.resolver.annotation.MappedField
+import org.springframework.data.annotation.Id
 import java.util.Date
 
 @MongoCrudEntity

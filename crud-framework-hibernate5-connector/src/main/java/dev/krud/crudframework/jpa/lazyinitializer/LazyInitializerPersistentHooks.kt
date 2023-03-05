@@ -1,6 +1,5 @@
 package dev.krud.crudframework.jpa.lazyinitializer
 
-import org.hibernate.Hibernate
 import dev.krud.crudframework.crud.hooks.interfaces.CreateFromHooks
 import dev.krud.crudframework.crud.hooks.interfaces.CreateHooks
 import dev.krud.crudframework.crud.hooks.interfaces.IndexHooks
@@ -13,6 +12,7 @@ import dev.krud.crudframework.model.BaseCrudEntity
 import dev.krud.crudframework.modelfilter.DynamicModelFilter
 import dev.krud.crudframework.ro.PagedResult
 import dev.krud.crudframework.util.ReflectionUtils
+import org.hibernate.Hibernate
 
 class LazyInitializerPersistentHooks :
     ShowHooks<Long, BaseCrudEntity<Long>>,

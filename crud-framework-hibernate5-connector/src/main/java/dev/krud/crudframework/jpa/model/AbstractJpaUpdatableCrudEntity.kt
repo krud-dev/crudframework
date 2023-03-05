@@ -1,15 +1,14 @@
 package dev.krud.crudframework.jpa.model
 
+import dev.krud.crudframework.jpa.ro.AbstractJpaUpdatableCrudRO
 import dev.krud.shapeshift.resolver.annotation.MappedField
 import org.hibernate.annotations.CreationTimestamp
-import dev.krud.crudframework.jpa.ro.AbstractJpaUpdatableCrudRO
-import java.util.Date
+import java.time.LocalDate
 import jakarta.persistence.Column
 import jakarta.persistence.MappedSuperclass
 import jakarta.persistence.Temporal
 import jakarta.persistence.TemporalType
 import jakarta.persistence.Version
-import java.time.LocalDate
 
 @MappedSuperclass
 abstract class AbstractJpaUpdatableCrudEntity : AbstractJpaCrudEntity() {

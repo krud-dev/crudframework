@@ -2,6 +2,7 @@ package dev.krud.crudframework.web.rest
 
 import com.google.gson.Gson
 import dev.krud.crudframework.crud.annotation.Deleteable
+import dev.krud.crudframework.modelfilter.dsl.where
 import dev.krud.crudframework.test.AbstractTestEntity
 import dev.krud.crudframework.test.AbstractTestRO
 import dev.krud.crudframework.test.EnableTestCrud
@@ -27,7 +28,6 @@ import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isNull
-import dev.krud.crudframework.modelfilter.dsl.where
 
 @RestController
 @RequestMapping("/crud")
@@ -59,11 +59,11 @@ class CrudRestControllerTest {
         val result = response.body as ResultRO<TestEntityMainRO>
         expectThat(result.error).isNull()
         expectThat(result.result)
-                .isA<TestEntityMainRO>()
+            .isA<TestEntityMainRO>()
         expectThat(result.result.id)
-                .isEqualTo(1L)
+            .isEqualTo(1L)
         expectThat(result.result.name)
-                .isEqualTo(subject.name)
+            .isEqualTo(subject.name)
     }
 
     @Test
@@ -75,11 +75,11 @@ class CrudRestControllerTest {
         val result = response.body as ResultRO<TestEntitySplitShowRO>
         expectThat(result.error).isNull()
         expectThat(result.result)
-                .isA<TestEntitySplitShowRO>()
+            .isA<TestEntitySplitShowRO>()
         expectThat(result.result.id)
-                .isEqualTo(1L)
+            .isEqualTo(1L)
         expectThat(result.result.name)
-                .isEqualTo(subject.name)
+            .isEqualTo(subject.name)
     }
 
     @Test
@@ -143,13 +143,13 @@ class CrudRestControllerTest {
         val result = response.body as ResultRO<List<TestEntityMainRO>>
         expectThat(result.error).isNull()
         expectThat(result.result)
-                .hasSize(1)
+            .hasSize(1)
         expectThat(result.result.first())
-                .isA<TestEntityMainRO>()
+            .isA<TestEntityMainRO>()
         expectThat(result.result.first().id)
-                .isEqualTo(1L)
+            .isEqualTo(1L)
         expectThat(result.result.first().name)
-                .isEqualTo(subject.name)
+            .isEqualTo(subject.name)
     }
 
     @Test
@@ -162,13 +162,13 @@ class CrudRestControllerTest {
         val result = response.body as ResultRO<List<TestEntitySplitIndexRO>>
         expectThat(result.error).isNull()
         expectThat(result.result)
-                .hasSize(1)
+            .hasSize(1)
         expectThat(result.result.first())
-                .isA<TestEntitySplitIndexRO>()
+            .isA<TestEntitySplitIndexRO>()
         expectThat(result.result.first().id)
-                .isEqualTo(1L)
+            .isEqualTo(1L)
         expectThat(result.result.first().name)
-                .isEqualTo(subject.name)
+            .isEqualTo(subject.name)
     }
 
     @Test
@@ -197,7 +197,7 @@ class CrudRestControllerTest {
         val result = response.body as ResultRO<Long>
         expectThat(result.error).isNull()
         expectThat(result.result)
-                .isEqualTo(2)
+            .isEqualTo(2)
     }
 
     @Test
@@ -225,11 +225,11 @@ class CrudRestControllerTest {
         val result = response.body as ResultRO<TestEntityMainRO>
         expectThat(result.error).isNull()
         expectThat(result.result)
-                .isA<TestEntityMainRO>()
+            .isA<TestEntityMainRO>()
         expectThat(result.result.name)
-                .isEqualTo("newTest")
+            .isEqualTo("newTest")
         expectThat(testCrudDao.entities.size)
-                .isEqualTo(1)
+            .isEqualTo(1)
     }
 
     @Test
@@ -241,11 +241,11 @@ class CrudRestControllerTest {
         val result = response.body as ResultRO<TestEntitySplitShowRO>
         expectThat(result.error).isNull()
         expectThat(result.result)
-                .isA<TestEntitySplitShowRO>()
+            .isA<TestEntitySplitShowRO>()
         expectThat(result.result.name)
-                .isEqualTo("newTest")
+            .isEqualTo("newTest")
         expectThat(testCrudDao.entities.size)
-                .isEqualTo(1)
+            .isEqualTo(1)
     }
 
     @Test
@@ -275,9 +275,9 @@ class CrudRestControllerTest {
         val result = response.body as ResultRO<TestEntityMainRO>
         expectThat(result.error).isNull()
         expectThat(result.result)
-                .isA<TestEntityMainRO>()
+            .isA<TestEntityMainRO>()
         expectThat(result.result.name)
-                .isEqualTo("newTest")
+            .isEqualTo("newTest")
     }
 
     @Test
@@ -291,9 +291,9 @@ class CrudRestControllerTest {
         val result = response.body as ResultRO<TestEntitySplitShowRO>
         expectThat(result.error).isNull()
         expectThat(result.result)
-                .isA<TestEntitySplitShowRO>()
+            .isA<TestEntitySplitShowRO>()
         expectThat(result.result.name)
-                .isEqualTo("newTest")
+            .isEqualTo("newTest")
     }
 
     @Test
@@ -328,11 +328,11 @@ class CrudRestControllerTest {
         val result = response.body as ResultRO<ManyCrudResult<TestEntitySplitShowRO, TestEntitySplitUpdateRO>>
         expectThat(result.error).isNull()
         expectThat(result.result.successful)
-                .hasSize(2)
+            .hasSize(2)
         expectThat(result.result.successful.toList()[0].name)
-                .isEqualTo("newTest")
+            .isEqualTo("newTest")
         expectThat(result.result.successful.toList()[1].name)
-                .isEqualTo("newTest2")
+            .isEqualTo("newTest2")
     }
 }
 
@@ -393,4 +393,4 @@ class TestEntityMainRO(@MappedField var name: String? = null) : AbstractTestRO()
         delete = false
     )
 )
-class TestEntityShowDisabled: AbstractTestEntity(1L)
+class TestEntityShowDisabled : AbstractTestEntity(1L)

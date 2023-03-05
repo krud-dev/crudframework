@@ -1,9 +1,9 @@
 package dev.krud.crudframework.jpa.model
 
-import dev.krud.shapeshift.resolver.annotation.MappedField
 import dev.krud.crudframework.jpa.annotation.JpaCrudEntity
 import dev.krud.crudframework.jpa.ro.AbstractJpaCrudRO
 import dev.krud.crudframework.model.BaseCrudEntity
+import dev.krud.shapeshift.resolver.annotation.MappedField
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id

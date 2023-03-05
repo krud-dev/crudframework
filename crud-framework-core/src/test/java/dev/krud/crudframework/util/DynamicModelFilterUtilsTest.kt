@@ -1,12 +1,12 @@
 package dev.krud.crudframework.util
 
+import dev.krud.crudframework.model.BaseCrudEntity
+import dev.krud.crudframework.model.PersistentEntity
+import dev.krud.crudframework.modelfilter.dsl.where
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
-import dev.krud.crudframework.model.BaseCrudEntity
-import dev.krud.crudframework.model.PersistentEntity
-import dev.krud.crudframework.modelfilter.dsl.where
 import java.util.Date
 
 private class Customer(

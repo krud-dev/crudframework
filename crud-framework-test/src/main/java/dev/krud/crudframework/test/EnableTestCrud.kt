@@ -1,7 +1,7 @@
 package dev.krud.crudframework.test
 
-import org.springframework.context.annotation.Import
 import dev.krud.crudframework.crud.annotation.EnableCrudFramework
+import org.springframework.context.annotation.Import
 
 /**
  * Enable the Crud Framework with the `TestCrudDaoImpl` dao

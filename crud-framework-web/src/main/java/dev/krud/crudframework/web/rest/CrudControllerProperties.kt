@@ -1,7 +1,7 @@
 package dev.krud.crudframework.web.rest
 
-import org.springframework.boot.context.properties.ConfigurationProperties
 import dev.krud.crudframework.crud.configuration.properties.CrudFrameworkProperties
+import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(CrudControllerProperties.CONFIGURATION_PREFIX)
 class CrudControllerProperties {

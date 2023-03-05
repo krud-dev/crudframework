@@ -1,6 +1,9 @@
 package dev.krud.crudframework.web.rest
 
+import dev.krud.crudframework.crud.handler.CrudHandler
+import dev.krud.crudframework.model.BaseCrudEntity
 import org.reflections.Reflections
+import org.reflections.util.ConfigurationBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
@@ -9,9 +12,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportAware
 import org.springframework.core.type.AnnotationMetadata
-import dev.krud.crudframework.crud.handler.CrudHandler
-import dev.krud.crudframework.model.BaseCrudEntity
-import org.reflections.util.ConfigurationBuilder
 import kotlin.reflect.KClass
 
 @Configuration

@@ -1,13 +1,13 @@
 package dev.krud.crudframework.crud.configuration
 
+import dev.krud.crudframework.crud.cache.CacheManagerAdapter
+import dev.krud.crudframework.crud.cache.adapter.ehcache.EhCacheManagerAdapter
 import net.sf.ehcache.CacheManager
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import dev.krud.crudframework.crud.cache.CacheManagerAdapter
-import dev.krud.crudframework.crud.cache.adapter.ehcache.EhCacheManagerAdapter
 
 @Configuration
 @ConditionalOnClass(CacheManager::class)

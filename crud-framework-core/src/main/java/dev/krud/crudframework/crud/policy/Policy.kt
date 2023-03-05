@@ -60,7 +60,6 @@ class Policy<RootType : PersistentEntity>(
         )
     }
 
-
     fun evaluatePreCanAccess(principal: Principal?): Result<RootType> {
         val result = canAccessRules.map { it.evaluatePreConditions(principal) }
         return Result(
@@ -99,7 +98,7 @@ class Policy<RootType : PersistentEntity>(
         }
 
         private fun appendSuccess(success: Boolean): String {
-            return if(success) {
+            return if (success) {
                 Chalk.on("PASSED").bold().green().toString()
             } else {
                 Chalk.on("FAILED").bold().red().toString()

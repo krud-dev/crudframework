@@ -26,6 +26,4 @@ abstract class BaseRO<ID> : Serializable {
     override fun hashCode(): Int {
         return id?.hashCode() ?: 0
     }
-
-
 }

@@ -1,8 +1,8 @@
 package dev.krud.crudframework.mongo.annotation
 
-import org.springframework.context.annotation.Import
 import dev.krud.crudframework.crud.annotation.EnableCrudFramework
 import dev.krud.crudframework.mongo.config.CrudMongoConnectorConfiguration
+import org.springframework.context.annotation.Import
 
 @Target(AnnotationTarget.CLASS)
 @Import(CrudMongoConnectorConfiguration::class)

@@ -1,11 +1,11 @@
 package dev.krud.crudframework.crud.model
 
-import org.junit.jupiter.api.Assertions.assertArrayEquals
-import org.junit.jupiter.api.Test
 import dev.krud.crudframework.crud.annotation.WithHooks
 import dev.krud.crudframework.crud.hooks.interfaces.CRUDHooks
 import dev.krud.crudframework.crud.test.AbstractTestEntity
 import dev.krud.crudframework.model.BaseCrudEntity
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Test
 import java.io.Serializable
 
 class EntityMetadataDTOHookTest {

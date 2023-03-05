@@ -18,13 +18,14 @@ internal class CrudSecurityHandlerImpl(
     private val principalProvider: ObjectProvider<PrincipalProvider>
 ) : CrudSecurityHandler, InitializingBean {
     private val policyMap = ConcurrentHashMap<Class<*>, MutableList<Policy<PersistentEntity>>>()
+
     @Autowired
     private lateinit var applicationContext: ApplicationContext
 
     override fun afterPropertiesSet() {
         for (policy in policies.orderedStream()) {
             policyMap.computeIfAbsent(policy.clazz) { mutableListOf() }
-                    .add(policy)
+                .add(policy)
         }
     }
 

@@ -250,7 +250,11 @@ class FilterFieldDslTest {
         }.children.first()
 
         filterField.runAssertions(
-            "testString", FilterFieldOperation.Contains, FilterFieldDataType.String, 1, arrayOf("value")
+            "testString",
+            FilterFieldOperation.Contains,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
         )
     }
 

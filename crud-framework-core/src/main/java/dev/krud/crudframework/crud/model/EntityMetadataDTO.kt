@@ -1,7 +1,5 @@
 package dev.krud.crudframework.crud.model
 
-import org.springframework.core.annotation.AnnotatedElementUtils
-import org.springframework.core.annotation.AnnotationUtils
 import dev.krud.crudframework.crud.annotation.CachedBy
 import dev.krud.crudframework.crud.annotation.CrudEntity
 import dev.krud.crudframework.crud.annotation.DeleteColumn
@@ -12,10 +10,12 @@ import dev.krud.crudframework.crud.annotation.WithHooks
 import dev.krud.crudframework.crud.cache.CrudCacheOptions
 import dev.krud.crudframework.crud.handler.CrudDao
 import dev.krud.crudframework.crud.hooks.interfaces.CRUDHooks
+import dev.krud.crudframework.getGenericClass
 import dev.krud.crudframework.model.BaseCrudEntity
 import dev.krud.crudframework.model.PersistentEntity
 import dev.krud.crudframework.util.ReflectionUtils
-import dev.krud.crudframework.getGenericClass
+import org.springframework.core.annotation.AnnotatedElementUtils
+import org.springframework.core.annotation.AnnotationUtils
 import java.lang.reflect.Field
 import kotlin.reflect.KClass
 import kotlin.reflect.full.allSuperclasses

@@ -5,11 +5,11 @@ import dev.krud.crudframework.model.BaseCrudEntity
 import dev.krud.crudframework.modelfilter.DynamicModelFilter
 import dev.krud.crudframework.modelfilter.FilterField
 import dev.krud.crudframework.modelfilter.enums.FilterFieldOperation
+import java.io.Serializable
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import jakarta.persistence.TypedQuery
 import jakarta.persistence.criteria.*
-import java.io.Serializable
 
 class JpaDaoImpl : CrudDao {
     @PersistenceContext
@@ -76,7 +76,7 @@ class JpaDaoImpl : CrudDao {
 
     private fun CriteriaBuilder.getOrders(
         filter: DynamicModelFilter,
-        root: Root<*>,
+        root: Root<*>
     ): List<Order> {
         return filter.orders.mapNotNull {
             val by = it.by ?: return@mapNotNull null
@@ -99,18 +99,18 @@ class JpaDaoImpl : CrudDao {
             }
 
             FilterFieldOperation.In -> {
-                `in`(root.getExpressionByFieldName(filterField.fieldName)).value(filterField.value1())
+                `in`(root.getExpressionByFieldName(filterField.fieldName)).value(filterField.values.toList())
             }
 
             FilterFieldOperation.NotIn -> {
-                not(`in`(root.getExpressionByFieldName(filterField.fieldName)).value(filterField.value1()))
+                not(`in`(root.getExpressionByFieldName(filterField.fieldName)).value(filterField.values.toList()))
             }
 
             FilterFieldOperation.GreaterThan -> {
                 greaterThan(
                     root.getExpressionByFieldName(filterField.fieldName) as Expression<out Comparable<Any>>,
                     filterField.value1() as Comparable<Any>
-                );
+                )
             }
 
             FilterFieldOperation.GreaterEqual -> {

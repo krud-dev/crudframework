@@ -1,12 +1,12 @@
 package dev.krud.crudframework.crud.cache.adapter.ehcache
 
+import dev.krud.crudframework.crud.cache.CacheManagerAdapter
+import dev.krud.crudframework.crud.cache.CrudCache
+import dev.krud.crudframework.crud.cache.CrudCacheOptions
 import net.sf.ehcache.Cache
 import net.sf.ehcache.CacheManager
 import net.sf.ehcache.config.CacheConfiguration
 import org.slf4j.LoggerFactory
-import dev.krud.crudframework.crud.cache.CacheManagerAdapter
-import dev.krud.crudframework.crud.cache.CrudCache
-import dev.krud.crudframework.crud.cache.CrudCacheOptions
 
 class EhCacheManagerAdapter(
     private val cacheManager: CacheManager

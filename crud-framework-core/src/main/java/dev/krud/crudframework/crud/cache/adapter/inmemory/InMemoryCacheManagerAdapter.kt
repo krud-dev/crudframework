@@ -1,9 +1,9 @@
 package dev.krud.crudframework.crud.cache.adapter.inmemory
 
-import org.slf4j.LoggerFactory
 import dev.krud.crudframework.crud.cache.CacheManagerAdapter
 import dev.krud.crudframework.crud.cache.CrudCache
 import dev.krud.crudframework.crud.cache.CrudCacheOptions
+import org.slf4j.LoggerFactory
 
 class InMemoryCacheManagerAdapter : CacheManagerAdapter {
     private val caches = mutableMapOf<String, CrudCache>()

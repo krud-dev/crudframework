@@ -53,4 +53,3 @@ fun <RootType : PersistentEntity> not(setup: FilterFieldsBuilder<RootType>.() ->
 fun <RootType : PersistentEntity> emptyFilter(): DynamicModelFilter {
     return DynamicModelFilter()
 }
-

@@ -78,7 +78,11 @@ class PolicyBuilder<RootType : PersistentEntity>(
 
     fun build(): Policy<RootType> {
         return Policy(
-            name ?: DEFAULT_POLICY_NAME, location, clazz, filterFields, rules
+            name ?: DEFAULT_POLICY_NAME,
+            location,
+            clazz,
+            filterFields,
+            rules
         )
     }
 
@@ -87,4 +91,3 @@ class PolicyBuilder<RootType : PersistentEntity>(
         const val DEFAULT_FILTER_NAME = "unnamed filter"
     }
 }
-
