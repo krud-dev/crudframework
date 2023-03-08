@@ -46,7 +46,10 @@ class JpaDaoImpl : CrudDao {
     }
 
     override fun <ID : Serializable, Entity : BaseCrudEntity<ID>> saveOrUpdate(entity: Entity): Entity {
-        return entityManager.merge(entity)
+        val merged = entityManager.merge(entity)
+        entityManager.flush()
+        entityManager.refresh(merged)
+        return merged
     }
 
     private fun CriteriaBuilder.buildQueryFromFilter(filter: DynamicModelFilter, clazz: Class<*>): CriteriaQuery<*> {
