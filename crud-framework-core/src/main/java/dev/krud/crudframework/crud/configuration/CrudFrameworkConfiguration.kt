@@ -21,8 +21,20 @@ import org.springframework.context.annotation.Configuration
 class CrudFrameworkConfiguration {
 
     @Bean
-    fun crudHandler(): CrudHandler =
-        CrudHandlerImpl()
+    fun crudHandler(
+            crudReadHandler: CrudReadHandler,
+            crudUpdateHandler: CrudUpdateHandler,
+            crudDeleteHandler: CrudDeleteHandler,
+            crudCreateHandler: CrudCreateHandler,
+            crudHelper: CrudHelper
+    ): CrudHandler =
+        CrudHandlerImpl(
+            crudReadHandler,
+            crudUpdateHandler,
+            crudDeleteHandler,
+            crudCreateHandler,
+            crudHelper
+        )
 
     @Bean
     fun crudHelper(

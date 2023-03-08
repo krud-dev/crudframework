@@ -32,50 +32,30 @@ import dev.krud.crudframework.exception.WrapException;
 import dev.krud.crudframework.model.BaseCrudEntity;
 import dev.krud.crudframework.modelfilter.DynamicModelFilter;
 import dev.krud.crudframework.ro.PagedResult;
-import dev.krud.crudframework.util.DynamicModelFilterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
 @WrapException(CrudException.class)
 public class CrudHandlerImpl implements CrudHandler {
-    private CrudReadHandler crudReadHandler;
+    private final CrudReadHandler crudReadHandler;
 
-    private CrudUpdateHandler crudUpdateHandler;
+    private final CrudUpdateHandler crudUpdateHandler;
 
-    private CrudDeleteHandler crudDeleteHandler;
+    private final CrudDeleteHandler crudDeleteHandler;
 
-    private CrudCreateHandler crudCreateHandler;
+    private final CrudCreateHandler crudCreateHandler;
 
-    @Autowired
-    public void setCrudReadHandler(CrudReadHandler crudReadHandler) {
+    private final CrudHelper crudHelper;
+
+    public CrudHandlerImpl(CrudReadHandler crudReadHandler, CrudUpdateHandler crudUpdateHandler, CrudDeleteHandler crudDeleteHandler, CrudCreateHandler crudCreateHandler, CrudHelper crudHelper) {
         this.crudReadHandler = crudReadHandler;
-    }
-
-    @Autowired
-    public void setCrudUpdateHandler(CrudUpdateHandler crudUpdateHandler) {
         this.crudUpdateHandler = crudUpdateHandler;
-    }
-
-    @Autowired
-    public void setCrudDeleteHandler(CrudDeleteHandler crudDeleteHandler) {
         this.crudDeleteHandler = crudDeleteHandler;
-    }
-
-    @Autowired
-    public void setCrudCreateHandler(CrudCreateHandler crudCreateHandler) {
         this.crudCreateHandler = crudCreateHandler;
-    }
-
-    @Autowired
-    public void setCrudHelper(CrudHelper crudHelper) {
         this.crudHelper = crudHelper;
     }
-
-    @Autowired
-    private CrudHelper crudHelper;
 
     @Override
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity>, CRUDOnIndexHook<ID, Entity>, CRUDPostIndexHook<ID, Entity>, PagedResult<Entity>> index(
@@ -244,15 +224,4 @@ public class CrudHandlerImpl implements CrudHandler {
         );
     }
 
-    @Override
-    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> void validateFilter(DynamicModelFilter filter, Class<Entity> clazz) {
-        crudHelper.validateAndFillFilterFieldMetadata(filter.getFilterFields(), clazz);
-    }
-
-    @Override
-    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> boolean filterMatches(DynamicModelFilter filter, Entity entity) {
-        Objects.requireNonNull(entity, "'entity' cannot be null");
-        validateFilter(filter, entity.getClass());
-        return DynamicModelFilterUtils.filtersMatch(filter, entity);
-    }
 }

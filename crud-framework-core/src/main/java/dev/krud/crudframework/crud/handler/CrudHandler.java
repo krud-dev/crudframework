@@ -1,5 +1,7 @@
 package dev.krud.crudframework.crud.handler;
 
+import dev.krud.crudframework.crud.annotation.DeleteColumn;
+import dev.krud.crudframework.crud.annotation.Deleteable;
 import dev.krud.crudframework.crud.hooks.create.CRUDOnCreateHook;
 import dev.krud.crudframework.crud.hooks.create.CRUDPostCreateHook;
 import dev.krud.crudframework.crud.hooks.create.CRUDPreCreateHook;
@@ -31,8 +33,6 @@ import dev.krud.crudframework.crud.model.UpdateCRUDRequestBuilder;
 import dev.krud.crudframework.model.BaseCrudEntity;
 import dev.krud.crudframework.modelfilter.DynamicModelFilter;
 import dev.krud.crudframework.ro.PagedResult;
-import dev.krud.crudframework.crud.annotation.DeleteColumn;
-import dev.krud.crudframework.crud.annotation.Deleteable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -209,21 +209,4 @@ public interface CrudHandler {
      */
     <ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> ReadCRUDRequestBuilder<CRUDPreShowHook<ID, Entity>, CRUDOnShowHook<ID, Entity>, CRUDPostShowHook<ID, Entity>, RO> show(ID id, Class<Entity> clazz,
                                                                                                                                                                                             Class<RO> toClazz);
-
-
-    /**
-     * Validate a filter against an entity
-     *
-     * @param filter the filter
-     * @param clazz  the entity class
-     */
-    <ID extends Serializable, Entity extends BaseCrudEntity<ID>> void validateFilter(DynamicModelFilter filter, Class<Entity> clazz);
-
-    /**
-     * Check whether the given filter matches the given entity
-     *
-     * @param filter the filter to check
-     * @param entity the entity to check against
-     */
-    <ID extends Serializable, Entity extends BaseCrudEntity<ID>> boolean filterMatches(DynamicModelFilter filter, Entity entity);
 }

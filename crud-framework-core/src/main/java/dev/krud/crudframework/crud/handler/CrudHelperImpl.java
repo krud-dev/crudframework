@@ -20,9 +20,6 @@ import dev.krud.crudframework.modelfilter.enums.FilterFieldDataType;
 import dev.krud.crudframework.modelfilter.enums.FilterFieldOperation;
 import dev.krud.crudframework.util.ReflectionUtils;
 import dev.krud.shapeshift.ShapeShift;
-
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -33,7 +30,14 @@ import org.springframework.util.ClassUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -58,8 +62,6 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
     private final Map<Class<? extends BaseCrudEntity<?>>, EntityMetadataDTO> entityMetadataDTOs = new ConcurrentHashMap<>();
 
     private final Map<String, CrudCache> cacheMap = new HashMap<>();
-
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     private CrudCache pagingCache;
 
