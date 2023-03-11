@@ -6,7 +6,7 @@ data class PagedResult<T>(
     val total: Long,
     val hasMore: Boolean,
     val results: List<T>
-) {
+) : Iterable<T> by results {
     companion object {
         private val EMPTY = PagedResult(null, null, 0, false, emptyList<Any>())
         fun <T> empty(): PagedResult<T> = EMPTY as PagedResult<T>
