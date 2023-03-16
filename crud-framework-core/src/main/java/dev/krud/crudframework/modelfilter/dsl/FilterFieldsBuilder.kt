@@ -76,7 +76,7 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
         )
     }
 
-    infix fun KProperty1<RootType, UUID>.Equal(target: UUID) {
+    infix fun KProperty1<RootType, UUID?>.Equal(target: UUID) {
         filterFields += FilterField(
             effectiveName,
             FilterFieldOperation.Equal,
@@ -148,7 +148,7 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
         )
     }
 
-    infix fun KProperty1<RootType, UUID>.NotEqual(target: UUID) {
+    infix fun KProperty1<RootType, UUID?>.NotEqual(target: UUID) {
         filterFields += FilterField(
             effectiveName,
             FilterFieldOperation.NotEqual,
