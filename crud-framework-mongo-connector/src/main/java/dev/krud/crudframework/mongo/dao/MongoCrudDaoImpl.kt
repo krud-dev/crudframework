@@ -25,4 +25,9 @@ class MongoCrudDaoImpl : CrudDao, AbstractMongoBaseDao() {
         mongoTemplate.save(entity)
         return entity
     }
+
+    override fun <ID : Serializable, Entity : BaseCrudEntity<ID>> saveOrUpdate(entities: List<Entity>): List<Entity> {
+        entities.forEach { mongoTemplate.save(it) }
+        return entities
+    }
 }

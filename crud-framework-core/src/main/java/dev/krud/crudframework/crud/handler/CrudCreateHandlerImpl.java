@@ -61,6 +61,28 @@ public class CrudCreateHandlerImpl implements CrudCreateHandler {
     }
 
     @Override
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkCreateInternal(List<Entity> entities, boolean applyPolicies) {
+        Objects.requireNonNull(entities, "Entity cannot be null");
+        if (entities.isEmpty()) {
+            throw new IllegalStateException("Cannot create an empty list of entities");
+        }
+
+        Class<Entity> entityClazz = (Class<Entity>) entities.get(0).getClass();
+
+        if (applyPolicies) {
+            crudSecurityHandler.evaluatePreRulesAndThrow(PolicyRuleType.CAN_CREATE, entityClazz);
+        }
+
+        List<CreateHooks> hooks = crudHelper.getHooks(CreateHooks.class, entityClazz);
+
+        hooks.forEach(hook -> entities.forEach(hook::preCreate));
+
+        List<Entity> createdEntities = crudCreateTransactionalHandler.bulkCreateTransactional(entities, hooks);
+        hooks.forEach(hook -> createdEntities.forEach(hook::postCreate));
+        return createdEntities;
+    }
+
+    @Override
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity createFromInternal(Object object, Class<Entity> clazz,
                                                                                                   HooksDTO<CRUDPreCreateFromHook<ID, Entity>, CRUDOnCreateFromHook<ID, Entity>, CRUDPostCreateFromHook<ID, Entity>> hooks) {
         Objects.requireNonNull(object, "Object cannot be null");

@@ -33,4 +33,14 @@ class TestCrudDaoImpl : CrudDao {
         entities.add(entity)
         return entity
     }
+
+    override fun <ID : Serializable, Entity : BaseCrudEntity<ID>> saveOrUpdate(entities: List<Entity>): List<Entity> {
+        entities.forEach {
+            this.entities.removeIf { entity ->
+                entity.id == it.id
+            }
+            this.entities.add(it)
+        }
+        return entities
+    }
 }

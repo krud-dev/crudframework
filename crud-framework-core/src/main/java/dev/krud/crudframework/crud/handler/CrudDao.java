@@ -16,4 +16,6 @@ public interface CrudDao {
 	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> void hardDeleteById(ID id, Class<Entity> clazz);
 
 	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity saveOrUpdate(Entity entity);
+
+    <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> saveOrUpdate(List<Entity> entities);
 }

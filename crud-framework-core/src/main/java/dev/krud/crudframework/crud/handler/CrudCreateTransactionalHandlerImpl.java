@@ -3,6 +3,7 @@ package dev.krud.crudframework.crud.handler;
 import dev.krud.crudframework.crud.exception.CrudDeleteException;
 import dev.krud.crudframework.crud.hooks.create.CRUDOnCreateHook;
 import dev.krud.crudframework.crud.hooks.create.from.CRUDOnCreateFromHook;
+import dev.krud.crudframework.crud.hooks.interfaces.CreateHooks;
 import dev.krud.crudframework.model.BaseCrudEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,5 +44,12 @@ public class CrudCreateTransactionalHandlerImpl implements CrudCreateTransaction
         }
 
         return crudHelper.getCrudDaoForEntity(clazz).saveOrUpdate(entity);
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkCreateTransactional(List<Entity> entities, List<CreateHooks> hooks) {
+        hooks.forEach(hook -> entities.forEach(hook::onCreate));
+        return crudHelper.getCrudDaoForEntity(entities.get(0).getClass()).saveOrUpdate(entities);
     }
 }

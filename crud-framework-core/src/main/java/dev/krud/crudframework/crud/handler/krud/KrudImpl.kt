@@ -13,9 +13,8 @@ import dev.krud.crudframework.ro.PagedResult
 import org.springframework.beans.factory.InitializingBean
 import java.io.Serializable
 
-class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
-    private val crudCreateHandler: CrudCreateHandler, private val crudReadHandler: CrudReadHandler, private val crudUpdateHandler: CrudUpdateHandler, private val crudDeleteHandler: CrudDeleteHandler
-) :
+open class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
+        private val crudCreateHandler: CrudCreateHandler, private val crudReadHandler: CrudReadHandler, private val crudUpdateHandler: CrudUpdateHandler, private val crudDeleteHandler: CrudDeleteHandler) :
         InitializingBean, Krud<Entity, ID> {
     override lateinit var entityClazz: Class<Entity>
 
@@ -27,6 +26,10 @@ class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
 
     override fun create(entity: Entity, applyPolicies: Boolean): Entity {
         return crudCreateHandler.createInternal(entity, noHooks(), applyPolicies)
+    }
+
+    override fun bulkCreate(entities: List<Entity>, applyPolicies: Boolean): List<Entity> {
+        return crudCreateHandler.bulkCreateInternal(entities, applyPolicies)
     }
 
     override fun showById(id: ID, cached: Boolean, persistCopy: Boolean, applyPolicies: Boolean): Entity? {
@@ -58,13 +61,11 @@ class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
         return crudUpdateHandler.updateInternal(entity, noHooks(), applyPolicies)
     }
 
-
     override fun delete(id: ID, applyPolicies: Boolean) {
         crudDeleteHandler.deleteInternal(id, entityClazz, noHooks(), applyPolicies)
     }
 
     companion object {
-        private fun <PreHook, OnHook, PostHook> noHooks() =
-            HooksDTO(emptyList<PreHook>(), emptyList<OnHook>(), emptyList<PostHook>())
+        private fun <PreHook, OnHook, PostHook> noHooks() = HooksDTO(mutableListOf<PreHook>(), mutableListOf<OnHook>(), mutableListOf<PostHook>())
     }
 }

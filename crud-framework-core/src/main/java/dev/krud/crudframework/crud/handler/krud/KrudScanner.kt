@@ -33,14 +33,18 @@ class KrudScanner(private val environment: Environment) : ImportBeanDefinitionRe
     }
 
     private fun registerBeanDefinition(
-            it: BeanDefinition, registry: BeanDefinitionRegistry) {
+        it: BeanDefinition,
+        registry: BeanDefinitionRegistry
+    ) {
         val entityClazz = Class.forName(it.beanClassName)
         if (!BaseCrudEntity::class.java.isAssignableFrom(entityClazz)) {
             throw RuntimeException("Class ${entityClazz.simpleName} must extend BaseCrudEntity")
         }
 
         val type = ResolvableType.forClassWithGenerics(
-            Krud::class.java, entityClazz, box(
+            Krud::class.java,
+            entityClazz,
+            box(
                 entityClazz.getMethod("getId").returnType
             )
         )
@@ -50,13 +54,15 @@ class KrudScanner(private val environment: Environment) : ImportBeanDefinitionRe
         beanDefinition.propertyValues.add("entityClazz", entityClazz)
         beanDefinition.addQualifier(
             AutowireCandidateQualifier(
-                Qualifier::class.java, entityClazz.name
+                Qualifier::class.java,
+                entityClazz.name
             )
         )
         registry.registerBeanDefinition(
             registry.generateBeanName(
                 entityClazz
-            ), beanDefinition
+            ),
+            beanDefinition
         )
     }
 

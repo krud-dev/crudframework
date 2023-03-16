@@ -22,11 +22,11 @@ class CrudFrameworkConfiguration {
 
     @Bean
     fun crudHandler(
-            crudReadHandler: CrudReadHandler,
-            crudUpdateHandler: CrudUpdateHandler,
-            crudDeleteHandler: CrudDeleteHandler,
-            crudCreateHandler: CrudCreateHandler,
-            crudHelper: CrudHelper
+        crudReadHandler: CrudReadHandler,
+        crudUpdateHandler: CrudUpdateHandler,
+        crudDeleteHandler: CrudDeleteHandler,
+        crudCreateHandler: CrudCreateHandler,
+        crudHelper: CrudHelper
     ): CrudHandler =
         CrudHandlerImpl(
             crudReadHandler,

@@ -21,4 +21,8 @@ class TestCrudDao : CrudDao {
     override fun <ID : Serializable?, Entity : BaseCrudEntity<ID>?> saveOrUpdate(entity: Entity): Entity {
         TODO("Not yet implemented")
     }
+
+    override fun <ID : Serializable?, Entity : BaseCrudEntity<ID>?> saveOrUpdate(entities: MutableList<Entity>?): MutableList<Entity> {
+        TODO("Not yet implemented")
+    }
 }

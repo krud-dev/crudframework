@@ -9,5 +9,5 @@ import org.springframework.core.annotation.AliasFor
 @Import(KrudScanner::class)
 annotation class EnableKrud(
     @get:AliasFor("basePackages") val value: Array<String> = [],
-    val basePackages: Array<String> = [],
+    val basePackages: Array<String> = []
 )

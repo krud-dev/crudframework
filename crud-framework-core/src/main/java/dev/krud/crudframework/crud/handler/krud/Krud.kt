@@ -11,6 +11,8 @@ interface Krud<Entity : BaseCrudEntity<ID>, ID : Serializable> {
 
     fun create(entity: Entity, applyPolicies: Boolean = false): Entity
 
+    fun bulkCreate(entities: List<Entity>, applyPolicies: Boolean): List<Entity>
+
     fun showById(id: ID, cached: Boolean = false, persistCopy: Boolean = false, applyPolicies: Boolean = false): Entity?
 
     fun showByFilter(cached: Boolean = false, persistCopy: Boolean = false, applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit): Entity?
@@ -43,6 +45,4 @@ interface Krud<Entity : BaseCrudEntity<ID>, ID : Serializable> {
             delete(it, applyPolicies)
         }
     }
-
 }
-
