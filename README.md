@@ -27,7 +27,7 @@ Maven:
 <dependency>
     <groupId>dev.krud.crudframework</groupId>
     <artifactId>crud-framework-hibernate5-connector</artifactId>
-    <version>0.22.0</version>
+    <version>0.23.0</version>
 </dependency>
 ```
 
@@ -44,7 +44,7 @@ implementation("dev.krud.crudframework:crud-framework-hibernate5-connector:0.9.0
 <dependency>
     <groupId>dev.krud.crudframework</groupId>
     <artifactId>crud-framework-mongo-connector</artifactId>
-    <version>0.22.0</version>
+    <version>0.23.0</version>
 </dependency>
 ```
 
@@ -64,7 +64,7 @@ Contains useful utilities and classes for web operations
 <dependency>
     <groupId>dev.krud.crudframework</groupId>
     <artifactId>crud-framework-web</artifactId>
-    <version>0.22.0</version>
+    <version>0.23.0</version>
 </dependency>
 ```
 
