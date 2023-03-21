@@ -1,6 +1,7 @@
 package dev.krud.crudframework.crud.handler.krud
 
 import dev.krud.crudframework.model.BaseCrudEntity
+import dev.krud.crudframework.modelfilter.DynamicModelFilter
 import dev.krud.crudframework.modelfilter.dsl.FilterFieldsBuilder
 import dev.krud.crudframework.modelfilter.dsl.ModelFilterBuilder
 import dev.krud.crudframework.ro.PagedResult
@@ -17,9 +18,15 @@ interface Krud<Entity : BaseCrudEntity<ID>, ID : Serializable> {
 
     fun showByFilter(cached: Boolean = false, persistCopy: Boolean = false, applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit): Entity?
 
+    fun showByFilter(filter: DynamicModelFilter, cached: Boolean = false, persistCopy: Boolean = false, applyPolicies: Boolean = false): Entity?
+
     fun searchByFilter(cached: Boolean = false, persistCopy: Boolean = false, applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit): PagedResult<Entity>
 
+    fun searchByFilter(filter: DynamicModelFilter, cached: Boolean = false, persistCopy: Boolean = false, applyPolicies: Boolean = false): PagedResult<Entity>
+
     fun searchByFilterCount(applyPolicies: Boolean = false, block: FilterFieldsBuilder<Entity>.() -> Unit): Long
+
+    fun searchByFilterCount(filter: DynamicModelFilter, applyPolicies: Boolean = false): Long
 
     fun update(entity: Entity, applyPolicies: Boolean = false): Entity
 
@@ -36,13 +43,13 @@ interface Krud<Entity : BaseCrudEntity<ID>, ID : Serializable> {
         update(entity, applyPolicies)
     }
 
-    fun delete(id: ID, applyPolicies: Boolean = false)
+    fun deleteById(id: ID, applyPolicies: Boolean = false)
 
-    fun delete(entity: Entity, applyPolicies: Boolean = false) = delete(entity.id, applyPolicies)
+    fun deleteById(entity: Entity, applyPolicies: Boolean = false) = deleteById(entity.id, applyPolicies)
 
     fun deleteByFilter(applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit) {
         searchByFilter(applyPolicies = applyPolicies, block = block).forEach {
-            delete(it, applyPolicies)
+            deleteById(it, applyPolicies)
         }
     }
 }

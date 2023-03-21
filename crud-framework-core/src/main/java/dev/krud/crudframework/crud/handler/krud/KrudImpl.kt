@@ -40,6 +40,10 @@ open class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
         val builder = ModelFilterBuilder<Entity>()
         builder.block()
         val filter = builder.build()
+        return showByFilter(filter, cached, persistCopy, applyPolicies)
+    }
+
+    override fun showByFilter(filter: DynamicModelFilter, cached: Boolean, persistCopy: Boolean, applyPolicies: Boolean): Entity? {
         return crudReadHandler.showByInternal(filter, entityClazz, noHooks(), cached, persistCopy, applyPolicies)
     }
 
@@ -47,6 +51,10 @@ open class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
         val builder = ModelFilterBuilder<Entity>()
         builder.block()
         val filter = builder.build()
+        return searchByFilter(filter, cached, persistCopy, applyPolicies)
+    }
+
+    override fun searchByFilter(filter: DynamicModelFilter, cached: Boolean, persistCopy: Boolean, applyPolicies: Boolean): PagedResult<Entity> {
         return crudReadHandler.indexInternal(filter, entityClazz, noHooks(), cached, persistCopy, applyPolicies, false)
     }
 
@@ -54,6 +62,10 @@ open class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
         val builder = FilterFieldsBuilder<Entity>()
         builder.block()
         val filter = DynamicModelFilter(builder.build().toMutableList())
+        return searchByFilterCount(filter, applyPolicies)
+    }
+
+    override fun searchByFilterCount(filter: DynamicModelFilter, applyPolicies: Boolean): Long {
         return crudReadHandler.indexInternal(filter, entityClazz, noHooks(), false, false, applyPolicies, true).total
     }
 
@@ -61,7 +73,7 @@ open class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
         return crudUpdateHandler.updateInternal(entity, noHooks(), applyPolicies)
     }
 
-    override fun delete(id: ID, applyPolicies: Boolean) {
+    override fun deleteById(id: ID, applyPolicies: Boolean) {
         crudDeleteHandler.deleteInternal(id, entityClazz, noHooks(), applyPolicies)
     }
 

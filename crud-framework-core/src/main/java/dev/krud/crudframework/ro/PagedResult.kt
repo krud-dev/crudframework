@@ -13,6 +13,9 @@ data class PagedResult<T>(
         fun <T> of(results: List<T>): PagedResult<T> =
             PagedResult(0, results.size.toLong(), results.size.toLong(), false, results)
 
+        fun <T, N> PagedResult<N>.mapResults(mapper: (N) -> T): PagedResult<T> =
+            PagedResult(start, limit, total, hasMore, results.map(mapper))
+
         fun <T, N> PagedResult<T>.from(
             results: List<N>,
             start: Long? = this.start,
