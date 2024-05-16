@@ -42,7 +42,7 @@ jobs:
             if [ "${{ github.ref_type }}" = "tag" ]; then
               RELEASE_VERSION=${{ github.ref_name }}
               RELEASE_VERSION=${RELEASE_VERSION:1}
-            else 
+            else  
               RELEASE_VERSION=${{ github.sha }}-SNAPSHOT
             fi
             echo "Deploying version $RELEASE_VERSION"
