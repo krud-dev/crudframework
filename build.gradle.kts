@@ -21,11 +21,9 @@ if (hasProperty("release")) {
             "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
         }
 
-        if (!isSnapshot) {
-            java {
-                withJavadocJar()
-                withSourcesJar()
-            }
+        java {
+            withJavadocJar()
+            withSourcesJar()
         }
 
         // Hack described in https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/257#issuecomment-895790557
