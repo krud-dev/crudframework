@@ -1,8 +1,12 @@
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.util.*
+
 plugins {
     `java-library`
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "1.7.20"
+    id("org.jetbrains.dokka") version "1.8.20"
     id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
 }
 
@@ -17,11 +21,9 @@ if (hasProperty("release")) {
     val signingKeyBase64 = System.getenv("OSSRH_GPG_SECRET_KEY_BASE64")
     val signingPassword = System.getenv("OSSRH_GPG_SECRET_KEY_PASSWORD")
     val isSnapshot = version.toString().endsWith("-SNAPSHOT")
-    if (!isSnapshot) {
-      java {
+    java {
         withJavadocJar()
         withSourcesJar()
-      }
     }
   
     nexusPublishing {
@@ -37,11 +39,10 @@ if (hasProperty("release")) {
   
     publishing {
       publications.create<MavenPublication>("maven") {
-        artifact(tasks.bootJar.get().archiveFile)
         from(components["java"])
         version = releaseVersion
         pom {
-          name = project.name
+          name.set(project.name)
           version = releaseVersion
           description.set("Spring-powered Crud Framework")
           url.set("https://github.com/krud-dev/crud-framework")
