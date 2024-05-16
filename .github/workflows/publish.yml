@@ -3,12 +3,12 @@ name: Publish
 on:
   push:
     branches:
-      - main
+      - master
     tags:
       - v*
   pull_request:
     branches:
-      - main
+      - master
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -36,16 +36,17 @@ jobs:
           OSSRH_GPG_SECRET_KEY_PASSWORD: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            RELEASE_VERSION=${{ github.sha }}.${{ github.event.number }}-PR-SNAPSHOT
-            ./gradlew -Prelease -PreleaseVersion=$RELEASE_VERSION bootJar publishToSonatype
+            export RELEASE_VERSION=${{ github.event.number }}-PR-SNAPSHOT
+            echo "Deploying version $RELEASE_VERSION"
+            ./gradlew -Prelease jar publishToSonatype
           else
             if [ "${{ github.ref_type }}" = "tag" ]; then
-              RELEASE_VERSION=${{ github.ref_name }}
-              RELEASE_VERSION=${RELEASE_VERSION:1}
-            else 
-              RELEASE_VERSION=${{ github.sha }}-SNAPSHOT
+              export RELEASE_VERSION=${{ github.ref_name }}
+              export RELEASE_VERSION=${RELEASE_VERSION:1}
+            else
+              export RELEASE_VERSION=${{ github.sha }}-SNAPSHOT
             fi
             echo "Deploying version $RELEASE_VERSION"
-            ./gradlew -Prelease -Pversion=$RELEASE_VERSION bootJar publishToSonatype closeSonatypeStagingRepository
+            ./gradlew -Prelease jar publishToSonatype closeAndReleaseSonatypeStagingRepository
           fi
           
