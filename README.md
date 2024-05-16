@@ -87,4 +87,4 @@ Once activated, the `CrudHandler` bean can be wired and used.
 
 ## License
 
-CRUD Framework is released under CC-BY 3.0. For more information visit `LICENSE.md`
+CRUD Framework is released under the MIT license. For more information visit `LICENSE.md`
