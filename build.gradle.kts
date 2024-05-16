@@ -12,6 +12,10 @@ java {
 
 if (hasProperty("release")) {
     val releaseVersion = System.getenv("RELEASE_VERSION")
+    val ossrhUsername = System.getenv("OSSRH_USERNAME")
+    val ossrhPassword = System.getenv("OSSRH_PASSWORD")
+    val signingKeyBase64 = System.getenv("OSSRH_GPG_SECRET_KEY_BASE64")
+    val signingPassword = System.getenv("OSSRH_GPG_SECRET_KEY_PASSWORD")
     val isSnapshot = version.toString().endsWith("-SNAPSHOT")
     if (!isSnapshot) {
       java {
@@ -23,8 +27,8 @@ if (hasProperty("release")) {
     nexusPublishing {
       this@nexusPublishing.repositories {
         sonatype {
-          username.set(properties["ossrhUsername"].toString())
-          password.set(properties["ossrhPassword"].toString())
+          username.set(ossrhUsername)
+          password.set(ossrhPassword)
           nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
           snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
         }
@@ -74,9 +78,7 @@ if (hasProperty("release")) {
     }
     if (!isSnapshot) {
       signing {
-        val signingKeyBase64: String? by project
         val signingKey = signingKeyBase64?.let { decodeBase64(it) }
-        val signingPassword: String? by project
         useInMemoryPgpKeys(
           signingKey,
           signingPassword
