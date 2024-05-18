@@ -1,11 +1,7 @@
-import org.springframework.boot.gradle.tasks.bundling.BootJar
-import org.springframework.boot.gradle.tasks.run.BootRun
-
 plugins {
     `java-library`
     kotlin("jvm")
     kotlin("plugin.spring")
-    id("org.springframework.boot")
 }
 
 repositories {
@@ -13,9 +9,8 @@ repositories {
     mavenCentral()
 }
 
-apply(plugin = "io.spring.dependency-management")
-
 dependencies {
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:${Versions.SPRING_BOOT}"))
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -45,13 +40,13 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-tasks.named<BootJar>("bootJar") {
-    enabled = false
-}
-
-tasks.named<BootRun>("bootRun") {
-    enabled = false
-}
+//tasks.named<BootJar>("bootJar") {
+//    enabled = false
+//}
+//
+//tasks.named<BootRun>("bootRun") {
+//    enabled = false
+//}
 
 tasks.named<Jar>("jar") {
     enabled = true
