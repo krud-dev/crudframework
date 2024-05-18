@@ -36,7 +36,7 @@ jobs:
           OSSRH_GPG_SECRET_KEY_PASSWORD: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            export RELEASE_VERSION=${{ github.sha }}.${{ github.event.number }}-PR-SNAPSHOT
+            export RELEASE_VERSION=${{ github.event.number }}-PR-SNAPSHOT
             echo "Deploying version $RELEASE_VERSION"
             ./gradlew -Prelease jar publishToSonatype
           else
