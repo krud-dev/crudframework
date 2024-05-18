@@ -40,14 +40,6 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-//tasks.named<BootJar>("bootJar") {
-//    enabled = false
-//}
-//
-//tasks.named<BootRun>("bootRun") {
-//    enabled = false
-//}
-
 tasks.named<Jar>("jar") {
     enabled = true
     archiveClassifier.set("")

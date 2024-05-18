@@ -37,7 +37,7 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             RELEASE_VERSION=${{ github.sha }}.${{ github.event.number }}-PR-SNAPSHOT
-            ./gradlew -Prelease -PreleaseVersion=$RELEASE_VERSION bootJar publishToSonatype
+            ./gradlew -Prelease -PreleaseVersion=$RELEASE_VERSION jar publishToSonatype
           else
             if [ "${{ github.ref_type }}" = "tag" ]; then
               RELEASE_VERSION=${{ github.ref_name }}
@@ -46,6 +46,6 @@ jobs:
               RELEASE_VERSION=${{ github.sha }}-SNAPSHOT
             fi
             echo "Deploying version $RELEASE_VERSION"
-            ./gradlew -Prelease -Pversion=$RELEASE_VERSION bootJar publishToSonatype closeSonatypeStagingRepository
+            ./gradlew -Prelease -Pversion=$RELEASE_VERSION jar publishToSonatype closeSonatypeStagingRepository
           fi
           
