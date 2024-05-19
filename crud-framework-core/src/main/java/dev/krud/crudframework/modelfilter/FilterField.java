@@ -6,6 +6,8 @@ import dev.krud.crudframework.modelfilter.enums.FilterFieldOperation;
 import jakarta.annotation.Nullable;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -195,6 +197,10 @@ public class FilterField implements Serializable {
 				}
             case UUID:
                 return UUID.fromString(field.toString());
+            case BigInteger:
+                return new BigInteger(field.toString());
+            case BigDecimal:
+                return new BigDecimal(field.toString());
 			default:
 				return field;
 		}

@@ -6,7 +6,18 @@ import java.util.Map;
 import java.util.UUID;
 
 public enum FilterFieldDataType {
-    String(java.lang.String.class), Integer(java.lang.Integer.class), Long(java.lang.Long.class), Double(java.lang.Double.class), Boolean(java.lang.Boolean.class), Date(java.util.Date.class), Object(java.lang.Object.class), Enum(java.lang.Enum.class), UUID(java.util.UUID.class), None;
+    String(java.lang.String.class),
+    Integer(java.lang.Integer.class),
+    Long(java.lang.Long.class),
+    Double(java.lang.Double.class),
+    Boolean(java.lang.Boolean.class),
+    Date(java.util.Date.class),
+    Object(java.lang.Object.class),
+    Enum(java.lang.Enum.class),
+    UUID(java.util.UUID.class),
+    BigInteger(java.math.BigInteger.class),
+    BigDecimal(java.math.BigDecimal.class),
+    None;
 
     private static final Map<Class, FilterFieldDataType> lookup = new HashMap<>();
 

@@ -9,7 +9,14 @@ import java.io.Serializable
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import jakarta.persistence.TypedQuery
-import jakarta.persistence.criteria.*
+import jakarta.persistence.criteria.CriteriaBuilder
+import jakarta.persistence.criteria.CriteriaQuery
+import jakarta.persistence.criteria.Expression
+import jakarta.persistence.criteria.From
+import jakarta.persistence.criteria.Order
+import jakarta.persistence.criteria.Path
+import jakarta.persistence.criteria.Predicate
+import jakarta.persistence.criteria.Root
 
 class JpaDaoImpl : CrudDao {
     @PersistenceContext
@@ -34,7 +41,7 @@ class JpaDaoImpl : CrudDao {
         val cq = cb.buildQueryFromFilter(filter, clazz) as CriteriaQuery<Comparable<*>>
         cq.select(
             cb.count(
-                cq.from(clazz).get<Any>("id")
+                cq.roots.first().get<Any>("id")
             )
         )
         return entityManager.createQuery(cq).singleResult as Long
@@ -197,9 +204,15 @@ class JpaDaoImpl : CrudDao {
         if (!fieldName.contains(".")) {
             return this.get<Any>(fieldName)
         }
-        // Split first name into first node, and rest
-        val firstNode = fieldName.substringBefore(".")
 
-        return this.join<Any, Any>(firstNode).getExpressionByFieldName(fieldName.substringAfter("."))
+        var expression = this
+        val parts = fieldName.replace("/",".").split(".")
+        if(parts.size > 1) {
+            for (i in 0 .. parts.size - 2) {
+                expression = expression.joins.find { it.attribute.name == parts[i] } ?: expression.join<Any, Any>(parts[i])
+            }
+        }
+
+        return expression.getExpressionByFieldName(parts[parts.size - 1])
     }
 }
