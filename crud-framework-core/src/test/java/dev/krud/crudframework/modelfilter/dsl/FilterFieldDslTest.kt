@@ -28,6 +28,16 @@ class TestClazz : PersistentEntity {
     val testDateList: List<Date> = emptyList()
     val testBooleanList: List<Boolean> = emptyList()
     val testEnumList: List<TestEnum> = emptyList()
+    val testSubClazz: TestSubClazz = TestSubClazz()
+}
+
+class TestSubClazz: PersistentEntity {
+    val testString: String = "test"
+    val testSubSubClazz: TestSubSubClazz = TestSubSubClazz()
+}
+
+class TestSubSubClazz: PersistentEntity {
+    val testString: String = "test"
 }
 
 class FilterFieldDslTest {
@@ -585,6 +595,326 @@ class FilterFieldDslTest {
             FilterFieldDataType.Object,
             2,
             arrayOf(null, null)
+        )
+    }
+
+    @Test
+    fun `test SubClazz`() {
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                TestSubClazz::testString Equal "value"
+            }
+        }.children.first()
+
+        filterField.runAssertions(
+            "testSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test SubSubClazz`() {
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                TestSubClazz::testSubSubClazz.Sub {
+                    TestSubSubClazz::testString Equal "value"
+                }
+            }
+        }.children.first()
+
+        filterField.runAssertions(
+            "testSubClazz/testSubSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test or#SubClazz`() {
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                or {
+                    TestSubClazz::testString Equal "value"
+                }
+            }
+        }.children.first().children.first()
+
+        filterField.runAssertions(
+            "testSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test or#SubSubClazz`() {
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                TestSubClazz::testSubSubClazz.Sub {
+                    or {
+                        TestSubSubClazz::testString Equal "value"
+                    }
+                }
+            }
+        }.children.first().children.first()
+
+        filterField.runAssertions(
+            "testSubClazz/testSubSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test and#SubClazz`() {
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                and {
+                    TestSubClazz::testString Equal "value"
+                }
+            }
+        }.children.first().children.first()
+
+        filterField.runAssertions(
+            "testSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test and#SubSubClazz`() {
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                TestSubClazz::testSubSubClazz.Sub {
+                    and {
+                        TestSubSubClazz::testString Equal "value"
+                    }
+                }
+            }
+        }.children.first().children.first()
+
+        filterField.runAssertions(
+            "testSubClazz/testSubSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test not#SubClazz`() {
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                not {
+                    TestSubClazz::testString Equal "value"
+                }
+            }
+        }.children.first().children.first()
+
+        filterField.runAssertions(
+            "testSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test not#SubSubClazz`() {
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                TestSubClazz::testSubSubClazz.Sub {
+                    not {
+                        TestSubSubClazz::testString Equal "value"
+                    }
+                }
+            }
+        }.children.first().children.first()
+
+        filterField.runAssertions(
+            "testSubClazz/testSubSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test add#SubFilterField`() {
+        val fieldToAdd = and { TestSubClazz::testString Equal "value" }.children.first()
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                this.add(fieldToAdd)
+            }
+        }.children.first()
+
+        filterField.runAssertions(
+            "testSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test add#SubSubFilterField`() {
+        val fieldToAdd = and { TestSubSubClazz::testString Equal "value" }.children.first()
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                TestSubClazz::testSubSubClazz.Sub {
+                    this.add(fieldToAdd)
+                }
+            }
+        }.children.first()
+
+        filterField.runAssertions(
+            "testSubClazz/testSubSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test add#or#SubFilterField`() {
+        val fieldToAdd = and { TestSubClazz::testString Equal "value" }.children.first()
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                or {
+                    this.add(fieldToAdd)
+                }
+            }
+        }.children.first().children.first()
+
+        filterField.runAssertions(
+            "testSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test add#or#SubSubFilterField`() {
+        val fieldToAdd = and { TestSubSubClazz::testString Equal "value" }.children.first()
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                TestSubClazz::testSubSubClazz.Sub {
+                    or {
+                        this.add(fieldToAdd)
+                    }
+                }
+            }
+        }.children.first().children.first()
+
+        filterField.runAssertions(
+            "testSubClazz/testSubSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test add#and#SubFilterField`() {
+        val fieldToAdd = and { TestSubClazz::testString Equal "value" }.children.first()
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                and {
+                    this.add(fieldToAdd)
+                }
+            }
+        }.children.first().children.first()
+
+        filterField.runAssertions(
+            "testSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test add#and#SubSubFilterField`() {
+        val fieldToAdd = and { TestSubSubClazz::testString Equal "value" }.children.first()
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                TestSubClazz::testSubSubClazz.Sub {
+                    and {
+                        this.add(fieldToAdd)
+                    }
+                }
+            }
+        }.children.first().children.first()
+
+        filterField.runAssertions(
+            "testSubClazz/testSubSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test add#not#SubFilterField`() {
+        val fieldToAdd = and { TestSubClazz::testString Equal "value" }.children.first()
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                not {
+                    this.add(fieldToAdd)
+                }
+            }
+        }.children.first().children.first()
+
+        filterField.runAssertions(
+            "testSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test add#not#SubSubFilterField`() {
+        val fieldToAdd = and { TestSubSubClazz::testString Equal "value" }.children.first()
+        val filterField = and<TestClazz> {
+            TestClazz::testSubClazz.Sub {
+                TestSubClazz::testSubSubClazz.Sub {
+                    not {
+                        this.add(fieldToAdd)
+                    }
+                }
+            }
+        }.children.first().children.first()
+
+        filterField.runAssertions(
+            "testSubClazz/testSubSubClazz.testString",
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
         )
     }
 

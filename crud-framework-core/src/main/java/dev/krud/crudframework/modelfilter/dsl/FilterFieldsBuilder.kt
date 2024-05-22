@@ -669,7 +669,7 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
     }
 
     fun and(setup: FilterFieldsBuilder<RootType>.() -> Unit) {
-        val filterFieldsBuilder = FilterFieldsBuilder<RootType>()
+        val filterFieldsBuilder = FilterFieldsBuilder<RootType>(fieldPrefix = fieldPrefix)
         setup(filterFieldsBuilder)
 
         filterFields += FilterField().apply {
@@ -679,7 +679,7 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
     }
 
     fun or(setup: FilterFieldsBuilder<RootType>.() -> Unit) {
-        val filterFieldsBuilder = FilterFieldsBuilder<RootType>()
+        val filterFieldsBuilder = FilterFieldsBuilder<RootType>(fieldPrefix = fieldPrefix)
         setup(filterFieldsBuilder)
 
         filterFields += FilterField().apply {
@@ -689,7 +689,7 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
     }
 
     fun not(setup: FilterFieldsBuilder<RootType>.() -> Unit) {
-        val filterFieldsBuilder = FilterFieldsBuilder<RootType>()
+        val filterFieldsBuilder = FilterFieldsBuilder<RootType>(fieldPrefix = fieldPrefix)
         setup(filterFieldsBuilder)
 
         filterFields += FilterField().apply {
@@ -705,7 +705,19 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
     }
 
     fun add(filterField: FilterField) {
+        addPrefixToChildren(filterField)
         filterFields += filterField
+    }
+
+    private fun addPrefixToChildren(filterField: FilterField) {
+        if(fieldPrefix.isEmpty()) return
+        if(filterField.fieldName != null) {
+            filterField.fieldName = "$fieldPrefix.${filterField.fieldName}"
+        }
+
+        filterField.children?.forEach {
+            addPrefixToChildren(it)
+        }
     }
 
     infix fun <T> BetweenBuilder<T>.And(target: T) {
