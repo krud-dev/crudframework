@@ -14,9 +14,11 @@ class EntityMetadataDTOHookTest {
     private class GenericPersistentHooks2<ID : Serializable> :
         CRUDHooks<ID, BaseCrudEntity<ID>>
 
+    @Target(AnnotationTarget.CLASS, AnnotationTarget.FIELD)
     @WithHooks(hooks = [GenericPersistentHooks::class])
     private annotation class WithGenericPersistentHooks
 
+    @Target(AnnotationTarget.CLASS, AnnotationTarget.FIELD)
     @WithHooks(hooks = [GenericPersistentHooks2::class])
     private annotation class WithGenericPersistentHooks2
 
@@ -71,6 +73,20 @@ class EntityMetadataDTOHookTest {
 
         val metadata = EntityMetadataDTO(TestEntity::class.java)
 
+        assertArrayEquals(arrayOf(GenericPersistentHooks::class.java, GenericPersistentHooks2::class.java), metadata.hookTypesFromAnnotations.toTypedArray())
+    }
+
+    @Test
+    fun `withHooks should apply on field`() {
+        class TestEntity : AbstractTestEntity() {
+            @WithHooks(hooks = [GenericPersistentHooks::class])
+            val someField: String = "ABCD"
+
+            @WithGenericPersistentHooks2
+            val someOtherField: String = "ABCD"
+        }
+
+        val metadata = EntityMetadataDTO(TestEntity::class.java)
         assertArrayEquals(arrayOf(GenericPersistentHooks::class.java, GenericPersistentHooks2::class.java), metadata.hookTypesFromAnnotations.toTypedArray())
     }
 }

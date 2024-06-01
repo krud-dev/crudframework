@@ -158,7 +158,7 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
                         throw new RuntimeException("Cannot filter field [ " + fieldName + " ] as it was not found on entity [ " + metadataDTO.getSimpleName() + " ]");
                     }
 
-                    Field field = metadataDTO.getFields().get(fieldName);
+                    Field field = metadataDTO.getFields().get(fieldName).getField();
                     Class<?> fieldClazz = field.getType();
 
                     if (Collection.class.isAssignableFrom(field.getType())) {
