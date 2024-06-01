@@ -38,13 +38,14 @@ class EntityMetadataDTO {
 
     val hooksFromAnnotations: MutableSet<CRUDHooks<*, *>> = mutableSetOf()
 
-    val fields: MutableMap<String, Field> = mutableMapOf()
+    val fields: MutableMap<String, FieldDTO> = mutableMapOf()
 
     val daoClazz: Class<out CrudDao>
 
     constructor(entityClazz: KClass<out BaseCrudEntity<*>>) : this(entityClazz.java)
 
     constructor(entityClazz: Class<out BaseCrudEntity<*>>) {
+        getFields(entityClazz)
         deleteField = getEntityDeleteField(entityClazz)
         deleteableType = getEntityDeleteableType(entityClazz)
         cacheMetadata = getEntityCacheMetadata(entityClazz)
@@ -52,7 +53,6 @@ class EntityMetadataDTO {
         alwaysPersistCopy = shouldAlwaysPersistCopy(entityClazz)
         collectHookAnnotations(entityClazz)
         daoClazz = getEntityDao(entityClazz)
-        getFields(entityClazz)
         simpleName = entityClazz.simpleName
     }
 
@@ -80,7 +80,7 @@ class EntityMetadataDTO {
             if (PersistentEntity::class.java.isAssignableFrom(fieldClazz) && currentDepth < MAX_FILTERFIELD_DEPTH) {
                 getFields(fieldClazz as Class<out PersistentEntity>, effectivePrefix + it.name, currentDepth + 1)
             } else {
-                fields[effectivePrefix + it.name] = it
+                fields[effectivePrefix + it.name] = FieldDTO(it, it.declaredAnnotations.toList())
             }
         }
     }
@@ -88,7 +88,7 @@ class EntityMetadataDTO {
     private fun collectHookAnnotations(entityClazz: Class<out BaseCrudEntity<*>>) {
         val hookAnnotations = mutableSetOf<WithHooks>()
         val annotations = entityClazz.declaredAnnotations + entityClazz.kotlin.allSuperclasses
-            .flatMap { it.java.declaredAnnotations.toList() }
+            .flatMap { it.java.declaredAnnotations.toList() } + fields.flatMap { (_, dto) -> dto.annotations }
 
         // The first search targets the WithHooks.List annotation, which is the repeatable container for WithHooks
         annotations

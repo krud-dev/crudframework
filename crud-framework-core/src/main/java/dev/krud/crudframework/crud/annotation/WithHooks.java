@@ -11,8 +11,9 @@ import java.lang.annotation.Target;
 
 /**
  * Entity annotation, used to define generic persistent hooks which will run on the given entity
+ * When applied on a field, applies itself to the entity
  */
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(WithHooks.List.class)
 public @interface WithHooks {
