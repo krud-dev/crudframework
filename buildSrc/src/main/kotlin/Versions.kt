@@ -2,7 +2,7 @@ object Versions {
     val SPRING_BOOT = "3.0.2"
 
     // KRUD
-    val SHAPESHIFT = "0.7.0"
+    val SHAPESHIFT = "0.9.0"
     val SPRING_COMPONENTMAP = "0.1.0"
 
     // Others
