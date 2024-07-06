@@ -657,7 +657,10 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
         val filterFieldsBuilder = FilterFieldsBuilder<ChildType>(fieldPrefix = prefix)
         setup(filterFieldsBuilder)
 
-        filterFields += filterFieldsBuilder.build()
+        filterFields += FilterField().apply {
+            this.children = filterFieldsBuilder.build()
+            this.operation = FilterFieldOperation.And
+        }
     }
 
     infix fun <ChildType : PersistentEntity> KProperty1<RootType, Collection<ChildType>?>.SubCollection(setup: FilterFieldsBuilder<ChildType>.() -> Unit) {
@@ -665,7 +668,10 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
         val filterFieldsBuilder = FilterFieldsBuilder<ChildType>(fieldPrefix = prefix)
         setup(filterFieldsBuilder)
 
-        filterFields += filterFieldsBuilder.build()
+        filterFields += FilterField().apply {
+            this.children = filterFieldsBuilder.build()
+            this.operation = FilterFieldOperation.And
+        }
     }
 
     fun and(setup: FilterFieldsBuilder<RootType>.() -> Unit) {
