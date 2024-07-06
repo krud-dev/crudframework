@@ -604,7 +604,7 @@ class FilterFieldDslTest {
             TestClazz::testSubClazz.Sub {
                 TestSubClazz::testString Equal "value"
             }
-        }.children.first()
+        }.children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz.testString",
@@ -623,7 +623,7 @@ class FilterFieldDslTest {
                     TestSubSubClazz::testString Equal "value"
                 }
             }
-        }.children.first()
+        }.children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz/testSubSubClazz.testString",
@@ -642,7 +642,7 @@ class FilterFieldDslTest {
                     TestSubClazz::testString Equal "value"
                 }
             }
-        }.children.first().children.first()
+        }.children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz.testString",
@@ -663,7 +663,7 @@ class FilterFieldDslTest {
                     }
                 }
             }
-        }.children.first().children.first()
+        }.children.first().children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz/testSubSubClazz.testString",
@@ -682,7 +682,7 @@ class FilterFieldDslTest {
                     TestSubClazz::testString Equal "value"
                 }
             }
-        }.children.first().children.first()
+        }.children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz.testString",
@@ -703,7 +703,7 @@ class FilterFieldDslTest {
                     }
                 }
             }
-        }.children.first().children.first()
+        }.children.first().children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz/testSubSubClazz.testString",
@@ -722,7 +722,7 @@ class FilterFieldDslTest {
                     TestSubClazz::testString Equal "value"
                 }
             }
-        }.children.first().children.first()
+        }.children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz.testString",
@@ -743,7 +743,7 @@ class FilterFieldDslTest {
                     }
                 }
             }
-        }.children.first().children.first()
+        }.children.first().children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz/testSubSubClazz.testString",
@@ -761,7 +761,7 @@ class FilterFieldDslTest {
             TestClazz::testSubClazz.Sub {
                 this.add(fieldToAdd)
             }
-        }.children.first()
+        }.children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz.testString",
@@ -781,7 +781,7 @@ class FilterFieldDslTest {
                     this.add(fieldToAdd)
                 }
             }
-        }.children.first()
+        }.children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz/testSubSubClazz.testString",
@@ -801,7 +801,7 @@ class FilterFieldDslTest {
                     this.add(fieldToAdd)
                 }
             }
-        }.children.first().children.first()
+        }.children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz.testString",
@@ -823,7 +823,7 @@ class FilterFieldDslTest {
                     }
                 }
             }
-        }.children.first().children.first()
+        }.children.first().children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz/testSubSubClazz.testString",
@@ -843,7 +843,7 @@ class FilterFieldDslTest {
                     this.add(fieldToAdd)
                 }
             }
-        }.children.first().children.first()
+        }.children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz.testString",
@@ -865,7 +865,7 @@ class FilterFieldDslTest {
                     }
                 }
             }
-        }.children.first().children.first()
+        }.children.first().children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz/testSubSubClazz.testString",
@@ -885,7 +885,7 @@ class FilterFieldDslTest {
                     this.add(fieldToAdd)
                 }
             }
-        }.children.first().children.first()
+        }.children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz.testString",
@@ -907,7 +907,7 @@ class FilterFieldDslTest {
                     }
                 }
             }
-        }.children.first().children.first()
+        }.children.first().children.first().children.first().children.first()
 
         filterField.runAssertions(
             "testSubClazz/testSubSubClazz.testString",
