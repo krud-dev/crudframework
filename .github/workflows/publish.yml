@@ -47,6 +47,6 @@ jobs:
               export RELEASE_VERSION=${{ github.sha }}-SNAPSHOT
             fi
             echo "Deploying version $RELEASE_VERSION"
-            ./gradlew --info -Prelease jar publishToSonatype closeAndReleaseSonatypeStagingRepository
+            ./gradlew -Prelease jar publishToSonatype closeAndReleaseSonatypeStagingRepository
           fi
           
