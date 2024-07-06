@@ -14,15 +14,15 @@ interface Krud<Entity : BaseCrudEntity<ID>, ID : Serializable> {
 
     fun bulkCreate(entities: List<Entity>, applyPolicies: Boolean): List<Entity>
 
-    fun showById(id: ID, cached: Boolean = false, persistCopy: Boolean = false, applyPolicies: Boolean = false): Entity?
+    fun showById(id: ID, cached: Boolean = false, persistCopy: Boolean? = null, applyPolicies: Boolean = false): Entity?
 
-    fun showByFilter(cached: Boolean = false, persistCopy: Boolean = false, applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit): Entity?
+    fun showByFilter(cached: Boolean = false, persistCopy: Boolean? = null, applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit): Entity?
 
-    fun showByFilter(filter: DynamicModelFilter, cached: Boolean = false, persistCopy: Boolean = false, applyPolicies: Boolean = false): Entity?
+    fun showByFilter(filter: DynamicModelFilter, cached: Boolean = false, persistCopy: Boolean? = null, applyPolicies: Boolean = false): Entity?
 
-    fun searchByFilter(cached: Boolean = false, persistCopy: Boolean = false, applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit): PagedResult<Entity>
+    fun searchByFilter(cached: Boolean = false, persistCopy: Boolean? = null, applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit): PagedResult<Entity>
 
-    fun searchByFilter(filter: DynamicModelFilter, cached: Boolean = false, persistCopy: Boolean = false, applyPolicies: Boolean = false): PagedResult<Entity>
+    fun searchByFilter(filter: DynamicModelFilter, cached: Boolean = false, persistCopy: Boolean? = null, applyPolicies: Boolean = false): PagedResult<Entity>
 
     fun searchByFilterCount(applyPolicies: Boolean = false, block: FilterFieldsBuilder<Entity>.() -> Unit): Long
 

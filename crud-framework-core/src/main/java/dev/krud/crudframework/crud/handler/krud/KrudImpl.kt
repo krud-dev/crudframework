@@ -32,29 +32,29 @@ open class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
         return crudCreateHandler.bulkCreateInternal(entities, applyPolicies)
     }
 
-    override fun showById(id: ID, cached: Boolean, persistCopy: Boolean, applyPolicies: Boolean): Entity? {
+    override fun showById(id: ID, cached: Boolean, persistCopy: Boolean?, applyPolicies: Boolean): Entity? {
         return crudReadHandler.showInternal(id, entityClazz, noHooks(), cached, persistCopy, applyPolicies)
     }
 
-    override fun showByFilter(cached: Boolean, persistCopy: Boolean, applyPolicies: Boolean, block: ModelFilterBuilder<Entity>.() -> Unit): Entity? {
+    override fun showByFilter(cached: Boolean, persistCopy: Boolean?, applyPolicies: Boolean, block: ModelFilterBuilder<Entity>.() -> Unit): Entity? {
         val builder = ModelFilterBuilder<Entity>()
         builder.block()
         val filter = builder.build()
         return showByFilter(filter, cached, persistCopy, applyPolicies)
     }
 
-    override fun showByFilter(filter: DynamicModelFilter, cached: Boolean, persistCopy: Boolean, applyPolicies: Boolean): Entity? {
+    override fun showByFilter(filter: DynamicModelFilter, cached: Boolean, persistCopy: Boolean?, applyPolicies: Boolean): Entity? {
         return crudReadHandler.showByInternal(filter, entityClazz, noHooks(), cached, persistCopy, applyPolicies)
     }
 
-    override fun searchByFilter(cached: Boolean, persistCopy: Boolean, applyPolicies: Boolean, block: ModelFilterBuilder<Entity>.() -> Unit): PagedResult<Entity> {
+    override fun searchByFilter(cached: Boolean, persistCopy: Boolean?, applyPolicies: Boolean, block: ModelFilterBuilder<Entity>.() -> Unit): PagedResult<Entity> {
         val builder = ModelFilterBuilder<Entity>()
         builder.block()
         val filter = builder.build()
         return searchByFilter(filter, cached, persistCopy, applyPolicies)
     }
 
-    override fun searchByFilter(filter: DynamicModelFilter, cached: Boolean, persistCopy: Boolean, applyPolicies: Boolean): PagedResult<Entity> {
+    override fun searchByFilter(filter: DynamicModelFilter, cached: Boolean, persistCopy: Boolean?, applyPolicies: Boolean): PagedResult<Entity> {
         return crudReadHandler.indexInternal(filter, entityClazz, noHooks(), cached, persistCopy, applyPolicies, false)
     }
 
