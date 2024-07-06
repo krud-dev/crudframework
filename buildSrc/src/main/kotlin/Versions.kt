@@ -3,7 +3,7 @@ object Versions {
 
     // KRUD
     val SHAPESHIFT = "0.9.0"
-    val SPRING_COMPONENTMAP = "0.1.0"
+    val SPRING_COMPONENTMAP = "0.2.0"
 
     // Others
     val GSON = "2.10"
