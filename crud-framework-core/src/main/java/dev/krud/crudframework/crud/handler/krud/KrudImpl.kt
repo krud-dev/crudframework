@@ -34,7 +34,7 @@ open class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
         return crudReadHandler.showInternal(id, entityClazz, noHooks(), cached, persistCopy, applyPolicies)
     }
 
-    override fun showByFilter(filter: DynamicModelFilter, cached: Boolean, persistCopy: Boolean, applyPolicies: Boolean): Entity? {
+    override fun showByFilter(filter: DynamicModelFilter, cached: Boolean, persistCopy: Boolean?, applyPolicies: Boolean): Entity? {
         return crudReadHandler.showByInternal(filter, entityClazz, noHooks(), cached, persistCopy, applyPolicies)
     }
 
