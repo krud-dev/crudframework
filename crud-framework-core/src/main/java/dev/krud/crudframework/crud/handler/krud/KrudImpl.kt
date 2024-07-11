@@ -7,8 +7,6 @@ import dev.krud.crudframework.crud.handler.CrudUpdateHandler
 import dev.krud.crudframework.crud.hooks.HooksDTO
 import dev.krud.crudframework.model.BaseCrudEntity
 import dev.krud.crudframework.modelfilter.DynamicModelFilter
-import dev.krud.crudframework.modelfilter.dsl.FilterFieldsBuilder
-import dev.krud.crudframework.modelfilter.dsl.ModelFilterBuilder
 import dev.krud.crudframework.ro.PagedResult
 import org.springframework.beans.factory.InitializingBean
 import java.io.Serializable
@@ -36,33 +34,12 @@ open class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
         return crudReadHandler.showInternal(id, entityClazz, noHooks(), cached, persistCopy, applyPolicies)
     }
 
-    override fun showByFilter(cached: Boolean, persistCopy: Boolean?, applyPolicies: Boolean, block: ModelFilterBuilder<Entity>.() -> Unit): Entity? {
-        val builder = ModelFilterBuilder<Entity>()
-        builder.block()
-        val filter = builder.build()
-        return showByFilter(filter, cached, persistCopy, applyPolicies)
-    }
-
-    override fun showByFilter(filter: DynamicModelFilter, cached: Boolean, persistCopy: Boolean?, applyPolicies: Boolean): Entity? {
+    override fun showByFilter(filter: DynamicModelFilter, cached: Boolean, persistCopy: Boolean, applyPolicies: Boolean): Entity? {
         return crudReadHandler.showByInternal(filter, entityClazz, noHooks(), cached, persistCopy, applyPolicies)
-    }
-
-    override fun searchByFilter(cached: Boolean, persistCopy: Boolean?, applyPolicies: Boolean, block: ModelFilterBuilder<Entity>.() -> Unit): PagedResult<Entity> {
-        val builder = ModelFilterBuilder<Entity>()
-        builder.block()
-        val filter = builder.build()
-        return searchByFilter(filter, cached, persistCopy, applyPolicies)
     }
 
     override fun searchByFilter(filter: DynamicModelFilter, cached: Boolean, persistCopy: Boolean?, applyPolicies: Boolean): PagedResult<Entity> {
         return crudReadHandler.indexInternal(filter, entityClazz, noHooks(), cached, persistCopy, applyPolicies, false)
-    }
-
-    override fun searchByFilterCount(applyPolicies: Boolean, block: FilterFieldsBuilder<Entity>.() -> Unit): Long {
-        val builder = FilterFieldsBuilder<Entity>()
-        builder.block()
-        val filter = DynamicModelFilter(builder.build().toMutableList())
-        return searchByFilterCount(filter, applyPolicies)
     }
 
     override fun searchByFilterCount(filter: DynamicModelFilter, applyPolicies: Boolean): Long {
