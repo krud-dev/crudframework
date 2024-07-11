@@ -5,6 +5,7 @@ import dev.krud.crudframework.modelfilter.DynamicModelFilter
 import dev.krud.crudframework.modelfilter.dsl.FilterFieldsBuilder
 import dev.krud.crudframework.modelfilter.dsl.ModelFilterBuilder
 import dev.krud.crudframework.ro.PagedResult
+import dev.krud.crudframework.ro.PagedResult.Companion.mapResults
 import java.io.Serializable
 
 interface Krud<Entity : BaseCrudEntity<ID>, ID : Serializable> {
@@ -16,40 +17,69 @@ interface Krud<Entity : BaseCrudEntity<ID>, ID : Serializable> {
 
     fun showById(id: ID, cached: Boolean = false, persistCopy: Boolean? = null, applyPolicies: Boolean = false): Entity?
 
-    fun showByFilter(cached: Boolean = false, persistCopy: Boolean? = null, applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit): Entity?
-
     fun showByFilter(filter: DynamicModelFilter, cached: Boolean = false, persistCopy: Boolean? = null, applyPolicies: Boolean = false): Entity?
 
-    fun searchByFilter(cached: Boolean = false, persistCopy: Boolean? = null, applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit): PagedResult<Entity>
+    fun showByFilter(cached: Boolean = false, persistCopy: Boolean? = null, applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit): Entity? {
+        val builder = ModelFilterBuilder<Entity>()
+        builder.block()
+        val filter = builder.build()
+        return showByFilter(filter, cached, persistCopy, applyPolicies)
+    }
 
     fun searchByFilter(filter: DynamicModelFilter, cached: Boolean = false, persistCopy: Boolean? = null, applyPolicies: Boolean = false): PagedResult<Entity>
 
-    fun searchByFilterCount(applyPolicies: Boolean = false, block: FilterFieldsBuilder<Entity>.() -> Unit): Long
+    fun searchByFilter(cached: Boolean = false, persistCopy: Boolean? = null, applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit): PagedResult<Entity> {
+        val builder = ModelFilterBuilder<Entity>()
+        builder.block()
+        val filter = builder.build()
+        return searchByFilter(filter, cached, persistCopy, applyPolicies)
+    }
 
     fun searchByFilterCount(filter: DynamicModelFilter, applyPolicies: Boolean = false): Long
 
+    fun searchByFilterCount(applyPolicies: Boolean = false, block: FilterFieldsBuilder<Entity>.() -> Unit): Long {
+        val builder = FilterFieldsBuilder<Entity>()
+        builder.block()
+        val filter = DynamicModelFilter(builder.build().toMutableList())
+        return searchByFilterCount(filter, applyPolicies)
+    }
+
     fun update(entity: Entity, applyPolicies: Boolean = false): Entity
 
-    fun updateByFilter(applyPolicies: Boolean = false, searchBlock: ModelFilterBuilder<Entity>.() -> Unit, updateBlock: Entity.() -> Unit) {
-        searchByFilter(applyPolicies = applyPolicies, block = searchBlock).forEach {
+    fun updateByFilter(filter: DynamicModelFilter, applyPolicies: Boolean = false, updateBlock: Entity.() -> Unit): PagedResult<Entity> {
+        return searchByFilter(filter, applyPolicies = applyPolicies).mapResults {
             it.updateBlock()
             update(it, applyPolicies)
         }
     }
 
-    fun updateById(id: ID, applyPolicies: Boolean = false, block: Entity.() -> Unit) {
+    fun updateByFilter(applyPolicies: Boolean = false, searchBlock: ModelFilterBuilder<Entity>.() -> Unit, updateBlock: Entity.() -> Unit): PagedResult<Entity> {
+        val builder = ModelFilterBuilder<Entity>()
+        builder.searchBlock()
+        val filter = builder.build()
+        return updateByFilter(filter, applyPolicies, updateBlock)
+    }
+
+    fun updateById(id: ID, applyPolicies: Boolean = false, block: Entity.() -> Unit): Entity {
         val entity = showById(id, applyPolicies = applyPolicies) ?: error("Entity with id $id not found")
         entity.block()
-        update(entity, applyPolicies)
+        return update(entity, applyPolicies)
     }
 
     fun deleteById(id: ID, applyPolicies: Boolean = false)
 
-    fun deleteById(entity: Entity, applyPolicies: Boolean = false) = deleteById(entity.id, applyPolicies)
+    fun delete(entity: Entity, applyPolicies: Boolean = false) = deleteById(entity.id, applyPolicies)
+
+    fun deleteByFilter(filter: DynamicModelFilter, applyPolicies: Boolean = false) {
+        searchByFilter(filter, applyPolicies = applyPolicies).forEach {
+            delete(it, applyPolicies)
+        }
+    }
 
     fun deleteByFilter(applyPolicies: Boolean = false, block: ModelFilterBuilder<Entity>.() -> Unit) {
-        searchByFilter(applyPolicies = applyPolicies, block = block).forEach {
-            deleteById(it, applyPolicies)
-        }
+        val builder = ModelFilterBuilder<Entity>()
+        builder.block()
+        val filter = builder.build()
+        deleteByFilter(filter, applyPolicies)
     }
 }
