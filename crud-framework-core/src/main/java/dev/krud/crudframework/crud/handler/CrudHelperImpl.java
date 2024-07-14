@@ -30,6 +30,8 @@ import org.springframework.util.ClassUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -197,6 +199,10 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
             return FilterFieldDataType.Enum;
         } else if (UUID.class.equals(clazz)) {
             return FilterFieldDataType.UUID;
+        } else if (BigInteger.class.equals(clazz)) {
+            return FilterFieldDataType.BigInteger;
+        } else if (BigDecimal.class.equals(clazz)) {
+            return FilterFieldDataType.BigDecimal;
         }
 
         return FilterFieldDataType.Object;
