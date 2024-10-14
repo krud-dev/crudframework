@@ -11,4 +11,8 @@ public interface CRUDHooks<ID extends Serializable, Entity extends BaseCrudEntit
 		Class[] generics = GenericTypeResolver.resolveTypeArguments(getClass(), CRUDHooks.class);
 		return generics[1];
 	}
+
+    default Integer getOrder() {
+        return Integer.MIN_VALUE;
+    }
 }
