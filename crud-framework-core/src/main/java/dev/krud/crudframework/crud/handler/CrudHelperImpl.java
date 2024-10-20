@@ -32,7 +32,9 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -96,6 +98,7 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
                 .filter(c -> c.getType() == entityClazz)
                 .collect(Collectors.toList());
         hooks.addAll(matchingAnnotationHooks);
+        hooks.sort(Comparator.comparingInt(CRUDHooks::getOrder));
         return hooks;
     }
 
@@ -402,3 +405,4 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
         }
     }
 }
+
