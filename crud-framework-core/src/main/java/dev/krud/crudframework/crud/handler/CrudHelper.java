@@ -2,6 +2,7 @@ package dev.krud.crudframework.crud.handler;
 
 import dev.krud.crudframework.crud.cache.CrudCache;
 import dev.krud.crudframework.crud.hooks.interfaces.CRUDHooks;
+import dev.krud.crudframework.crud.hooks.interfaces.FieldChangeHook;
 import dev.krud.crudframework.crud.model.EntityMetadataDTO;
 import dev.krud.crudframework.model.BaseCrudEntity;
 import dev.krud.crudframework.modelfilter.DynamicModelFilter;
@@ -19,6 +20,8 @@ import java.util.List;
 public interface CrudHelper {
 
     <ID extends Serializable, Entity extends BaseCrudEntity<ID>, HooksType extends CRUDHooks> List<HooksType> getHooks(Class<HooksType> crudHooksClazz, Class<Entity> entityClazz);
+
+    <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<FieldChangeHook> getFieldChangeHooks(Class<Entity> entityClazz);
 
     <ID extends Serializable, Entity extends BaseCrudEntity<ID>> boolean isEntityDeleted(Entity entity);
 

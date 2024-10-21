@@ -2,6 +2,7 @@ package dev.krud.crudframework.crud.handler
 
 import dev.krud.crudframework.crud.cache.CrudCache
 import dev.krud.crudframework.crud.hooks.interfaces.CRUDHooks
+import dev.krud.crudframework.crud.hooks.interfaces.FieldChangeHook
 import dev.krud.crudframework.crud.model.EntityMetadataDTO
 import dev.krud.crudframework.model.BaseCrudEntity
 import dev.krud.crudframework.modelfilter.DynamicModelFilter
@@ -10,6 +11,10 @@ import java.io.Serializable
 
 abstract class AbstractCrudHelper : CrudHelper {
     override fun <ID : Serializable?, Entity : BaseCrudEntity<ID>?, HooksType : CRUDHooks<*, out BaseCrudEntity<*>>?> getHooks(crudHooksClazz: Class<HooksType>?, entityClazz: Class<Entity>?): MutableList<HooksType> {
+        throw UnsupportedOperationException()
+    }
+
+    override fun <ID : Serializable?, Entity : BaseCrudEntity<ID>?> getFieldChangeHooks(entityClazz: Class<Entity>?): MutableList<FieldChangeHook<Any?, BaseCrudEntity<*>>> {
         throw UnsupportedOperationException()
     }
 

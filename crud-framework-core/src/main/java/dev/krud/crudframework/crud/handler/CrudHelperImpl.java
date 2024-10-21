@@ -9,6 +9,8 @@ import dev.krud.crudframework.crud.exception.CrudException;
 import dev.krud.crudframework.crud.exception.CrudInvalidStateException;
 import dev.krud.crudframework.crud.exception.CrudTransformationException;
 import dev.krud.crudframework.crud.hooks.interfaces.CRUDHooks;
+import dev.krud.crudframework.crud.hooks.interfaces.FieldChangeHook;
+import dev.krud.crudframework.crud.hooks.interfaces.FieldChangeHooks;
 import dev.krud.crudframework.crud.model.EntityCacheMetadata;
 import dev.krud.crudframework.crud.model.EntityMetadataDTO;
 import dev.krud.crudframework.exception.WrapException;
@@ -100,6 +102,18 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
         hooks.addAll(matchingAnnotationHooks);
         hooks.sort(Comparator.comparingInt(CRUDHooks::getOrder));
         return hooks;
+    }
+
+    @Override
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<FieldChangeHook> getFieldChangeHooks(Class<Entity> entityClazz) {
+        List<FieldChangeHook> fieldChangeHooks = new ArrayList<>();
+        List<FieldChangeHooks> fieldChangeHooksList = getHooks(FieldChangeHooks.class, entityClazz);
+
+        if (fieldChangeHooksList != null && !fieldChangeHooksList.isEmpty()) {
+            List<List<FieldChangeHook>> outerHooks = fieldChangeHooksList.stream().map(FieldChangeHooks::registeredFieldChangeHooks).collect(Collectors.toList());
+            fieldChangeHooks = outerHooks.stream().flatMap(List::stream).toList();
+        }
+        return fieldChangeHooks;
     }
 
     @Override
@@ -218,6 +232,12 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
 
         if (persistCopy == null) {
             persistCopy = getEntityMetadata(entityClazz).getAlwaysPersistCopy();
+        }
+        if(!persistCopy) {
+            List<FieldChangeHooks> fieldChangeHooksList = getHooks(FieldChangeHooks.class, entityClazz);
+            if (fieldChangeHooksList != null && !fieldChangeHooksList.isEmpty()) {
+                persistCopy = true;
+            }
         }
 
         List<Entity> result = getCrudDaoForEntity(entityClazz).index(filter, entityClazz);

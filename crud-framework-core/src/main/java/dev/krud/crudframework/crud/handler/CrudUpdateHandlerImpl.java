@@ -2,6 +2,7 @@ package dev.krud.crudframework.crud.handler;
 
 import dev.krud.crudframework.crud.exception.CrudUpdateException;
 import dev.krud.crudframework.crud.hooks.HooksDTO;
+import dev.krud.crudframework.crud.hooks.interfaces.FieldChangeHook;
 import dev.krud.crudframework.crud.hooks.interfaces.UpdateFromHooks;
 import dev.krud.crudframework.crud.hooks.interfaces.UpdateHooks;
 import dev.krud.crudframework.crud.hooks.update.CRUDOnUpdateHook;
@@ -88,13 +89,22 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 			preHook.run(entity);
 		}
 
-		entity = crudUpdateTransactionalHandler.updateTransactional(entity, filter, hooks.getOnHooks(), applyPolicies);
+        List<FieldChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(entity.getClass());
+        for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+            fieldChangeHook.runPreChange(entity);
+        }
+
+		entity = crudUpdateTransactionalHandler.updateTransactional(entity, filter, hooks.getOnHooks(), fieldChangeHooks, applyPolicies);
 
 		crudHelper.evictEntityFromCache(entity);
 
 		for(CRUDPostUpdateHook<ID, Entity> postHook : hooks.getPostHooks()) {
 			postHook.run(entity);
 		}
+
+        for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+            fieldChangeHook.runPostChange(entity);
+        }
 
 		return entity;
 	}
@@ -125,13 +135,18 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 			preHook.run(id, object);
 		}
 
-		Entity entity = crudUpdateTransactionalHandler.updateFromTransactional(filter, object, clazz, hooks.getOnHooks(), applyPolicies);
+        List<FieldChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(clazz);
+
+		Entity entity = crudUpdateTransactionalHandler.updateFromTransactional(filter, object, clazz, hooks.getOnHooks(), fieldChangeHooks, applyPolicies);
 
 		crudHelper.evictEntityFromCache(entity);
 
 		for(CRUDPostUpdateFromHook<ID, Entity> postHook : hooks.getPostHooks()) {
 			postHook.run(entity);
 		}
+        for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+            fieldChangeHook.runPostChange(entity);
+        }
 
 		return entity;
 	}
