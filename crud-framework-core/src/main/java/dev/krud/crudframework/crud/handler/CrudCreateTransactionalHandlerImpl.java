@@ -4,6 +4,7 @@ import dev.krud.crudframework.crud.exception.CrudDeleteException;
 import dev.krud.crudframework.crud.hooks.create.CRUDOnCreateHook;
 import dev.krud.crudframework.crud.hooks.create.from.CRUDOnCreateFromHook;
 import dev.krud.crudframework.crud.hooks.interfaces.CreateHooks;
+import dev.krud.crudframework.crud.hooks.interfaces.FieldChangeHook;
 import dev.krud.crudframework.model.BaseCrudEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,17 +23,21 @@ public class CrudCreateTransactionalHandlerImpl implements CrudCreateTransaction
 
     @Override
     @Transactional(readOnly = false)
-    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity createTransactional(Entity entity, List<CRUDOnCreateHook<ID, Entity>> onHooks) {
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity createTransactional(Entity entity, List<CRUDOnCreateHook<ID, Entity>> onHooks, List<FieldChangeHook> fieldChangeHooks) {
 
         for(CRUDOnCreateHook<ID, Entity> onHook : onHooks) {
             onHook.run(entity);
+        }
+
+        for(FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+            fieldChangeHook.runOnChange(entity);
         }
 
         return crudHelper.getCrudDaoForEntity(entity.getClass()).saveOrUpdate(entity);
     }
     @Override
     @Transactional(readOnly = false)
-    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity createFromTransactional(Object object, Class<Entity> clazz, List<CRUDOnCreateFromHook<ID, Entity>> onHooks) {
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity createFromTransactional(Object object, Class<Entity> clazz, List<CRUDOnCreateFromHook<ID, Entity>> onHooks, List<FieldChangeHook> fieldChangeHooks) {
         Entity entity = crudHelper.fill(object, clazz);
 
         if(entity.exists()) {
@@ -43,13 +48,18 @@ public class CrudCreateTransactionalHandlerImpl implements CrudCreateTransaction
             onHook.run(entity, object);
         }
 
+        for(FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+            fieldChangeHook.runOnChange(entity);
+        }
+
         return crudHelper.getCrudDaoForEntity(clazz).saveOrUpdate(entity);
     }
 
     @Override
     @Transactional(readOnly = false)
-    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkCreateTransactional(List<Entity> entities, List<CreateHooks> hooks) {
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkCreateTransactional(List<Entity> entities, List<CreateHooks> hooks, List<FieldChangeHook> fieldChangeHooks) {
         hooks.forEach(hook -> entities.forEach(hook::onCreate));
+        fieldChangeHooks.forEach(hook -> entities.forEach(hook::runOnChange));
         return crudHelper.getCrudDaoForEntity(entities.get(0).getClass()).saveOrUpdate(entities);
     }
 }

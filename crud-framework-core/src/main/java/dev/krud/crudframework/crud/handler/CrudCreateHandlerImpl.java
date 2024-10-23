@@ -10,6 +10,7 @@ import dev.krud.crudframework.crud.hooks.create.from.CRUDPostCreateFromHook;
 import dev.krud.crudframework.crud.hooks.create.from.CRUDPreCreateFromHook;
 import dev.krud.crudframework.crud.hooks.interfaces.CreateFromHooks;
 import dev.krud.crudframework.crud.hooks.interfaces.CreateHooks;
+import dev.krud.crudframework.crud.hooks.interfaces.FieldChangeHook;
 import dev.krud.crudframework.crud.policy.PolicyRuleType;
 import dev.krud.crudframework.exception.WrapException;
 import dev.krud.crudframework.model.BaseCrudEntity;
@@ -52,9 +53,17 @@ public class CrudCreateHandlerImpl implements CrudCreateHandler {
             preHook.run(entity);
         }
 
-        entity = crudCreateTransactionalHandler.createTransactional(entity, hooks.getOnHooks());
+        List<FieldChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(entity.getClass());
+        for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+            fieldChangeHook.runPreChange(entity);
+        }
+
+        entity = crudCreateTransactionalHandler.createTransactional(entity, hooks.getOnHooks(), fieldChangeHooks);
         for (CRUDPostCreateHook<ID, Entity> postHook : hooks.getPostHooks()) {
             postHook.run(entity);
+        }
+        for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+            fieldChangeHook.runPostChange(entity);
         }
 
         return entity;
@@ -74,11 +83,14 @@ public class CrudCreateHandlerImpl implements CrudCreateHandler {
         }
 
         List<CreateHooks> hooks = crudHelper.getHooks(CreateHooks.class, entityClazz);
-
         hooks.forEach(hook -> entities.forEach(hook::preCreate));
 
-        List<Entity> createdEntities = crudCreateTransactionalHandler.bulkCreateTransactional(entities, hooks);
+        List<FieldChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(entityClazz);
+        fieldChangeHooks.forEach(hook -> entities.forEach(hook::runPreChange));
+
+        List<Entity> createdEntities = crudCreateTransactionalHandler.bulkCreateTransactional(entities, hooks, fieldChangeHooks);
         hooks.forEach(hook -> createdEntities.forEach(hook::postCreate));
+        fieldChangeHooks.forEach(hook -> createdEntities.forEach(hook::runPostChange));
         return createdEntities;
     }
 
@@ -101,10 +113,16 @@ public class CrudCreateHandlerImpl implements CrudCreateHandler {
             preHook.run(object);
         }
 
-        Entity entity = crudCreateTransactionalHandler.createFromTransactional(object, clazz, hooks.getOnHooks());
+        List<FieldChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(clazz);
+
+        Entity entity = crudCreateTransactionalHandler.createFromTransactional(object, clazz, hooks.getOnHooks(), fieldChangeHooks);
         for (CRUDPostCreateFromHook<ID, Entity> postHook : hooks.getPostHooks()) {
             postHook.run(entity);
         }
+        for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+            fieldChangeHook.runPostChange(entity);
+        }
+
         return entity;
     }
 
