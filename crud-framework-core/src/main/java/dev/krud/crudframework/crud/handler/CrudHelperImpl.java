@@ -110,8 +110,9 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
         List<FieldChangeHooks> fieldChangeHooksList = getHooks(FieldChangeHooks.class, entityClazz);
 
         if (fieldChangeHooksList != null && !fieldChangeHooksList.isEmpty()) {
-            List<List<FieldChangeHook>> outerHooks = fieldChangeHooksList.stream().map(FieldChangeHooks::registeredFieldChangeHooks).collect(Collectors.toList());
-            fieldChangeHooks = outerHooks.stream().flatMap(List::stream).toList();
+            for (FieldChangeHooks changeHooks : fieldChangeHooksList) {
+                fieldChangeHooks.addAll(changeHooks.registeredFieldChangeHooks());
+            }
         }
         return fieldChangeHooks;
     }
