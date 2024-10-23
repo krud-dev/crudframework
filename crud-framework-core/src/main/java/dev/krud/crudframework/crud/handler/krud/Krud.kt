@@ -66,6 +66,8 @@ interface Krud<Entity : BaseCrudEntity<ID>, ID : Serializable> {
         return update(entity, applyPolicies)
     }
 
+    fun bulkUpdate(entities: List<Entity>, applyPolicies: Boolean): List<Entity>
+
     fun deleteById(id: ID, applyPolicies: Boolean = false)
 
     fun delete(entity: Entity, applyPolicies: Boolean = false) = deleteById(entity.id, applyPolicies)
@@ -82,4 +84,6 @@ interface Krud<Entity : BaseCrudEntity<ID>, ID : Serializable> {
         val filter = builder.build()
         deleteByFilter(filter, applyPolicies)
     }
+
+    fun bulkDelete(ids: List<ID>, applyPolicies: Boolean)
 }

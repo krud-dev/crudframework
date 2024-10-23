@@ -50,8 +50,16 @@ open class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
         return crudUpdateHandler.updateInternal(entity, noHooks(), applyPolicies)
     }
 
+    override fun bulkUpdate(entities: List<Entity>, applyPolicies: Boolean): List<Entity> {
+        return crudUpdateHandler.bulkUpdate(entities, noHooks(), applyPolicies)
+    }
+
     override fun deleteById(id: ID, applyPolicies: Boolean) {
         crudDeleteHandler.deleteInternal(id, entityClazz, noHooks(), applyPolicies)
+    }
+
+    override fun bulkDelete(ids: List<ID>, applyPolicies: Boolean) {
+        crudDeleteHandler.bulkDelete(ids, entityClazz, noHooks(), applyPolicies)
     }
 
     companion object {

@@ -17,7 +17,9 @@ import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @WrapException(CrudDeleteException.class)
 public class CrudDeleteHandlerImpl implements CrudDeleteHandler {
@@ -75,4 +77,54 @@ public class CrudDeleteHandlerImpl implements CrudDeleteHandler {
 			postHook.run(entity);
 		}
 	}
+
+    @Override
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> void bulkDelete(List<ID> ids, Class<Entity> entityClazz, HooksDTO<CRUDPreDeleteHook<ID, Entity>, CRUDOnDeleteHook<ID, Entity>, CRUDPostDeleteHook<ID, Entity>> hooks, boolean applyPolicies) {
+
+        Class<ID> idClass = (Class<ID>) ids.get(0).getClass();
+
+        DynamicModelFilter filter = new DynamicModelFilter()
+                .add(FilterFields.in("id", FilterFieldDataType.get(idClass), ids.stream().map(id -> (ID) id).collect(Collectors.toList())));
+
+        if (applyPolicies) {
+            crudSecurityHandler.evaluatePreRulesAndThrow(PolicyRuleType.CAN_DELETE, entityClazz);
+            crudSecurityHandler.decorateFilter(entityClazz, filter);
+        }
+
+        crudHelper.checkEntityImmutability(entityClazz);
+        crudHelper.checkEntityDeletability(entityClazz);
+
+        List<DeleteHooks> deleteHooksList = crudHelper.getHooks(DeleteHooks.class, entityClazz);
+
+        if(deleteHooksList != null && !deleteHooksList.isEmpty()) {
+            for(DeleteHooks<ID, Entity> deleteHooks : deleteHooksList) {
+                hooks.getPreHooks().add(0, deleteHooks::preDelete);
+                hooks.getOnHooks().add(0, deleteHooks::onDelete);
+                hooks.getPostHooks().add(0, deleteHooks::postDelete);
+            }
+        }
+
+        EntityMetadataDTO metadataDTO = crudHelper.getEntityMetadata(entityClazz);
+
+        for (ID id : ids) {
+            for (CRUDPreDeleteHook<ID, Entity> preHook : hooks.getPreHooks()) {
+                preHook.run(id);
+            }
+        }
+
+        List<Entity> result;
+
+        if(metadataDTO.getDeleteableType() == EntityMetadataDTO.DeleteableType.Hard) {
+            result = crudDeleteTransactionalHandler.bulkDeleteHardTransactional(filter, entityClazz, hooks.getOnHooks(), applyPolicies);
+        } else {
+            result = crudDeleteTransactionalHandler.bulkDeleteSoftTransactional(filter, metadataDTO.getDeleteField(), entityClazz, hooks.getOnHooks(), applyPolicies);
+        }
+
+        for (Entity entity : result) {
+            crudHelper.evictEntityFromCache(entity);
+            for (CRUDPostDeleteHook<ID, Entity> postHook : hooks.getPostHooks()) {
+                postHook.run(entity);
+            }
+        }
+    }
 }

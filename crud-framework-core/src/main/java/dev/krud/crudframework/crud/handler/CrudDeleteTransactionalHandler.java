@@ -12,4 +12,8 @@ public interface CrudDeleteTransactionalHandler {
     <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity deleteHardTransactional(DynamicModelFilter filter, Class<Entity> clazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks, boolean applyPolicies);
 
     <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity deleteSoftTransactional(DynamicModelFilter filter, Field deleteField, Class<Entity> clazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks, boolean applyPolicies);
+
+    <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkDeleteHardTransactional(DynamicModelFilter filter, Class<Entity> entityClazz, List<CRUDOnDeleteHook<ID,Entity>> onHooks, boolean applyPolicies);
+
+    <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkDeleteSoftTransactional(DynamicModelFilter filter, Field deleteField, Class<Entity> entityClazz, List<CRUDOnDeleteHook<ID,Entity>> onHooks, boolean applyPolicies);
 }

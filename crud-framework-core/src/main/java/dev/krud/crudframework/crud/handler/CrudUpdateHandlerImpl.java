@@ -151,5 +151,64 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 		return entity;
 	}
 
+    @Override
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkUpdate(List<Entity> entities, HooksDTO<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>> hooks, boolean applyPolicies) {
+        if (entities.isEmpty()) {
+            throw new IllegalStateException("Cannot update an empty list of entities");
+        }
 
+        Class<Entity> entityClazz = (Class<Entity>) entities.get(0).getClass();
+        List<FieldChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(entityClazz);
+        DynamicModelFilter filter = new DynamicModelFilter()
+                .add(FilterFields.in("id", FilterFieldDataType.get(entities.get(0).getId().getClass()), entities.stream().map(BaseCrudEntity::getId).toArray()));
+
+        if (applyPolicies) {
+            crudSecurityHandler.evaluatePreRulesAndThrow(PolicyRuleType.CAN_UPDATE, entityClazz);
+            crudSecurityHandler.decorateFilter(entityClazz, filter);
+        }
+
+        crudHelper.checkEntityImmutability(entityClazz);
+
+        List<UpdateHooks> updateHooksList = crudHelper.getHooks(UpdateHooks.class, entityClazz);
+
+        if (updateHooksList != null && !updateHooksList.isEmpty()) {
+            for (UpdateHooks<ID, Entity> updateHooks : updateHooksList) {
+                hooks.getPreHooks().add(0, updateHooks::preUpdate);
+                hooks.getOnHooks().add(0, updateHooks::onUpdate);
+                hooks.getPostHooks().add(0, updateHooks::postUpdate);
+            }
+        }
+
+        for (Entity entity : entities) {
+            Objects.requireNonNull(entity, "Entity cannot be null");
+            Objects.requireNonNull(entity.getId(), "Entity ID cannot be null");
+            if (!entity.exists()) {
+                throw new CrudUpdateException("Entity of type [ " + entity.getClass().getSimpleName() + " ] does not exist or cannot be updated");
+            }
+
+            for (CRUDPreUpdateHook<ID, Entity> preHook : hooks.getPreHooks()) {
+                preHook.run(entity);
+            }
+
+            for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+                fieldChangeHook.runPreChange(entity);
+            }
+        }
+
+        List<Entity> result = crudUpdateTransactionalHandler.bulkUpdateTransactional(entities, filter, hooks.getOnHooks(), fieldChangeHooks, applyPolicies);
+
+        for (Entity entity : result) {
+            crudHelper.evictEntityFromCache(entity);
+
+            for (CRUDPostUpdateHook<ID, Entity> postHook : hooks.getPostHooks()) {
+                postHook.run(entity);
+            }
+
+            for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+                fieldChangeHook.runPostChange(entity);
+            }
+        }
+
+        return result;
+    }
 }

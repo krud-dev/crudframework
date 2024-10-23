@@ -10,6 +10,7 @@ import dev.krud.crudframework.modelfilter.DynamicModelFilter;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CrudUpdateTransactionalHandlerImpl implements CrudUpdateTransactionalHandler {
@@ -69,5 +70,20 @@ public class CrudUpdateTransactionalHandlerImpl implements CrudUpdateTransaction
         }
 
         return crudHelper.getCrudDaoForEntity(clazz).saveOrUpdate(entity);
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkUpdateTransactional(List<Entity> entities, DynamicModelFilter filter, List<CRUDOnUpdateHook<ID, Entity>> onHooks, List<FieldChangeHook> fieldChangeHooks, boolean applyPolicies) {
+        if (entities.isEmpty()) {
+            throw new IllegalStateException("Cannot update an empty list of entities");
+        }
+
+        List<Entity> result = new ArrayList<>();
+        for (Entity entity : entities) {
+            result.add(updateTransactional(entity, filter, onHooks, fieldChangeHooks, applyPolicies));
+        }
+
+        return result;
     }
 }
