@@ -81,7 +81,8 @@ public class CrudDeleteHandlerImpl implements CrudDeleteHandler {
     @Override
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> void bulkDelete(List<ID> ids, Class<Entity> entityClazz, HooksDTO<CRUDPreDeleteHook<ID, Entity>, CRUDOnDeleteHook<ID, Entity>, CRUDPostDeleteHook<ID, Entity>> hooks, boolean applyPolicies) {
 
-        Class<ID> idClass = (Class<ID>) ids.get(0).getClass();
+        EntityMetadataDTO metadataDTO = crudHelper.getEntityMetadata(entityClazz);
+        Class<ID> idClass = (Class<ID>) metadataDTO.getFields().get("id").getField().getType();
 
         DynamicModelFilter filter = new DynamicModelFilter()
                 .add(FilterFields.in("id", FilterFieldDataType.get(idClass), ids.stream().map(id -> (ID) id).collect(Collectors.toList())));
@@ -103,8 +104,6 @@ public class CrudDeleteHandlerImpl implements CrudDeleteHandler {
                 hooks.getPostHooks().add(0, deleteHooks::postDelete);
             }
         }
-
-        EntityMetadataDTO metadataDTO = crudHelper.getEntityMetadata(entityClazz);
 
         for (ID id : ids) {
             for (CRUDPreDeleteHook<ID, Entity> preHook : hooks.getPreHooks()) {

@@ -1,5 +1,8 @@
 package dev.krud.crudframework.modelfilter.enums;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,8 +43,29 @@ public enum FilterFieldDataType {
         return matchingClass;
     }
 
-    public static FilterFieldDataType get(Class matchingClass) {
-        // todo: add unboxed -> boxed type conversion
-        return lookup.get(matchingClass);
+    public static FilterFieldDataType get(Class clazz) {
+        if (String.class.equals(clazz)) {
+            return FilterFieldDataType.String;
+        } else if (int.class.equals(clazz) || Integer.class.equals(clazz)) {
+            return FilterFieldDataType.Integer;
+        } else if (long.class.equals(clazz) || Long.class.equals(clazz)) {
+            return FilterFieldDataType.Long;
+        } else if (double.class.equals(clazz) || Double.class.equals(clazz)) {
+            return FilterFieldDataType.Double;
+        } else if (java.util.Date.class.equals(clazz)) {
+            return FilterFieldDataType.Date;
+        } else if (boolean.class.equals(clazz) || Boolean.class.equals(clazz)) {
+            return FilterFieldDataType.Boolean;
+        } else if (Enum.class.isAssignableFrom(clazz)) {
+            return FilterFieldDataType.Enum;
+        } else if (UUID.class.equals(clazz)) {
+            return FilterFieldDataType.UUID;
+        } else if (java.math.BigInteger.class.equals(clazz)) {
+            return FilterFieldDataType.BigInteger;
+        } else if (java.math.BigDecimal.class.equals(clazz)) {
+            return FilterFieldDataType.BigDecimal;
+        }
+
+        return FilterFieldDataType.Object;
     }
 }
