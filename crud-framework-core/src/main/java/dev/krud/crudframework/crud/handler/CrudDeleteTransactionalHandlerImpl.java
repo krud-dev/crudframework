@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CrudDeleteTransactionalHandlerImpl implements CrudDeleteTransactionalHandler {
@@ -54,6 +55,32 @@ public class CrudDeleteTransactionalHandlerImpl implements CrudDeleteTransaction
         return entity;
     }
 
+    @Override
+    @Transactional(readOnly = false)
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkDeleteHardTransactional(DynamicModelFilter filter, Class<Entity> entityClazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks, boolean applyPolicies) {
+        List<Entity> entities = getEntitiesForDeletion(filter, entityClazz, applyPolicies);
+
+        List<Entity> result = new ArrayList<>();
+        for(Entity entity : entities) {
+            result.add(deleteHardTransactional(filter, entityClazz, onHooks, applyPolicies));
+        }
+
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkDeleteSoftTransactional(DynamicModelFilter filter, Field deleteField, Class<Entity> entityClazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks, boolean applyPolicies) {
+        List<Entity> entities = getEntitiesForDeletion(filter, entityClazz, applyPolicies);
+
+        List<Entity> result = new ArrayList<>();
+        for(Entity entity : entities) {
+            result.add(deleteSoftTransactional(filter, deleteField, entityClazz, onHooks, applyPolicies));
+        }
+
+        return result;
+    }
+
     private <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity getEntityForDeletion(DynamicModelFilter filter, Class<Entity> clazz, boolean applyPolicies) {
         Entity entity = crudHelper.getEntity(filter, clazz, null);
 
@@ -65,5 +92,21 @@ public class CrudDeleteTransactionalHandlerImpl implements CrudDeleteTransaction
             crudSecurityHandler.evaluatePostRulesAndThrow(entity, PolicyRuleType.CAN_DELETE, clazz);
         }
         return entity;
+    }
+
+    private <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> getEntitiesForDeletion(DynamicModelFilter filter, Class<Entity> clazz, boolean applyPolicies) {
+        List<Entity> entities = crudHelper.getEntities(filter, clazz, null);
+
+        for(Entity entity : entities) {
+            if(crudHelper.isEntityDeleted(entity)) {
+                throw new CrudDeleteException("Entity of type [ " + clazz.getSimpleName() + " ] does not exist or cannot be deleted");
+            }
+
+            if (applyPolicies) {
+                crudSecurityHandler.evaluatePostRulesAndThrow(entity, PolicyRuleType.CAN_DELETE, clazz);
+            }
+        }
+
+        return entities;
     }
 }

@@ -189,7 +189,7 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
                         }
                     }
 
-                    FilterFieldDataType fieldDataType = getDataTypeFromClass(fieldClazz);
+                    FilterFieldDataType fieldDataType = FilterFieldDataType.get(fieldClazz);
                     filterField.setDataType(fieldDataType);
                     if (fieldDataType == FilterFieldDataType.Enum) {
                         filterField.setEnumType(fieldClazz.getName());
@@ -198,32 +198,6 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
             }
             filterField.validate();
         }
-    }
-
-    private FilterFieldDataType getDataTypeFromClass(Class clazz) {
-        if (String.class.equals(clazz)) {
-            return FilterFieldDataType.String;
-        } else if (int.class.equals(clazz) || Integer.class.equals(clazz)) {
-            return FilterFieldDataType.Integer;
-        } else if (long.class.equals(clazz) || Long.class.equals(clazz)) {
-            return FilterFieldDataType.Long;
-        } else if (double.class.equals(clazz) || Double.class.equals(clazz)) {
-            return FilterFieldDataType.Double;
-        } else if (Date.class.equals(clazz)) {
-            return FilterFieldDataType.Date;
-        } else if (boolean.class.equals(clazz) || Boolean.class.equals(clazz)) {
-            return FilterFieldDataType.Boolean;
-        } else if (Enum.class.isAssignableFrom(clazz)) {
-            return FilterFieldDataType.Enum;
-        } else if (UUID.class.equals(clazz)) {
-            return FilterFieldDataType.UUID;
-        } else if (BigInteger.class.equals(clazz)) {
-            return FilterFieldDataType.BigInteger;
-        } else if (BigDecimal.class.equals(clazz)) {
-            return FilterFieldDataType.BigDecimal;
-        }
-
-        return FilterFieldDataType.Object;
     }
 
     /* transactional */

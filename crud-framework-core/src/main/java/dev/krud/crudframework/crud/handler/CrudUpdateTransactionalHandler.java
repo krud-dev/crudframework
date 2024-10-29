@@ -5,6 +5,7 @@ import dev.krud.crudframework.crud.hooks.update.CRUDOnUpdateHook;
 import dev.krud.crudframework.crud.hooks.update.from.CRUDOnUpdateFromHook;
 import dev.krud.crudframework.model.BaseCrudEntity;
 import dev.krud.crudframework.modelfilter.DynamicModelFilter;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,4 +18,5 @@ public interface CrudUpdateTransactionalHandler {
 
 	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateTransactional(Entity entity, DynamicModelFilter filter, List<CRUDOnUpdateHook<ID, Entity>> onHooks, List<FieldChangeHook> fieldChangeHooks, boolean applyPolicies);
 	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateFromTransactional(DynamicModelFilter filter, Object object, Class<Entity> clazz, List<CRUDOnUpdateFromHook<ID, Entity>> onHooks, List<FieldChangeHook> fieldChangeHooks, boolean applyPolicies);
+    <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkUpdateTransactional(List<Entity> entities, DynamicModelFilter filter, List<CRUDOnUpdateHook<ID, Entity>> onHooks, List<FieldChangeHook> fieldChangeHooks, boolean applyPolicies);
 }
