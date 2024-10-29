@@ -85,7 +85,7 @@ public class CrudDeleteHandlerImpl implements CrudDeleteHandler {
         Class<ID> idClass = (Class<ID>) metadataDTO.getFields().get("id").getField().getType();
 
         DynamicModelFilter filter = new DynamicModelFilter()
-                .add(FilterFields.in("id", FilterFieldDataType.get(idClass), ids.stream().map(id -> (ID) id).collect(Collectors.toList())));
+                .add(FilterFields.in("id", FilterFieldDataType.get(idClass), ids.toArray()));
 
         if (applyPolicies) {
             crudSecurityHandler.evaluatePreRulesAndThrow(PolicyRuleType.CAN_DELETE, entityClazz);
