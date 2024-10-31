@@ -19,7 +19,9 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
                 if (!isCopy) {
                     val internalCopy = javaClass.newInstance()
                     internalCopy.isCopy = true
-                    BeanUtils.copyProperties(this, internalCopy)
+                    if(id != internalCopy.id) {
+                        BeanUtils.copyProperties(this, internalCopy)
+                    }
                     copy = internalCopy // ImmutableBean.create(internalCopy) as BaseCrudEntity<ID>
                 } else {
                     return null
