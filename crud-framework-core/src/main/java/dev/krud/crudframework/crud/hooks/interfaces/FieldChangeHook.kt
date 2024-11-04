@@ -8,31 +8,27 @@ abstract class FieldChangeHook<PropertyType, Entity : BaseCrudEntity<*>>(val pro
     open fun onChange(originalValue: PropertyType?, newValue: PropertyType?, entity: Entity) {}
     open fun postChange(originalValue: PropertyType?, newValue: PropertyType?, entity: Entity) {}
 
-    fun shouldTrigger(entity: Entity): Boolean {
-        val original = entity.saveOrGetCopy() as Entity
+    fun shouldTrigger(entity: Entity, original: Entity): Boolean {
         val originalValue = property.get(original) as PropertyType?
         val newValue = property.get(entity) as PropertyType?
         return originalValue != newValue
     }
 
-    fun runPreChange(entity: Entity) {
-        val original = entity.saveOrGetCopy() as Entity
+    fun runPreChange(entity: Entity, original: Entity) {
         val originalValue = property.get(original) as PropertyType?
         val newValue = property.get(entity) as PropertyType?
         if(originalValue == newValue) return
         preChange(originalValue, newValue, entity)
     }
 
-    fun runOnChange(entity: Entity) {
-        val original = entity.saveOrGetCopy() as Entity
+    fun runOnChange(entity: Entity, original: Entity) {
         val originalValue = property.get(original) as PropertyType?
         val newValue = property.get(entity) as PropertyType?
         if(originalValue == newValue) return
         onChange(originalValue, newValue, entity)
     }
 
-    fun runPostChange(entity: Entity) {
-        val original = entity.saveOrGetCopy() as Entity
+    fun runPostChange(entity: Entity, original: Entity) {
         val originalValue = property.get(original) as PropertyType?
         val newValue = property.get(entity) as PropertyType?
         if(originalValue == newValue) return

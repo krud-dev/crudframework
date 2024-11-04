@@ -22,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @WrapException(value = CrudUpdateException.class)
@@ -90,8 +92,13 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 		}
 
         List<FieldChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(entity.getClass());
+        Entity original = null;
+        if (fieldChangeHooks != null && !fieldChangeHooks.isEmpty()) {
+            original = (Entity) entity.saveOrGetCopy();
+        }
+
         for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
-            fieldChangeHook.runPreChange(entity);
+            fieldChangeHook.runPreChange(entity, original);
         }
 
 		entity = crudUpdateTransactionalHandler.updateTransactional(entity, filter, hooks.getOnHooks(), fieldChangeHooks, applyPolicies);
@@ -103,7 +110,7 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 		}
 
         for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
-            fieldChangeHook.runPostChange(entity);
+            fieldChangeHook.runPostChange(entity, original);
         }
 
 		return entity;
@@ -145,7 +152,7 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 			postHook.run(entity);
 		}
         for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
-            fieldChangeHook.runPostChange(entity);
+            fieldChangeHook.runPostChange(entity, entity.saveOrGetCopy());
         }
 
 		return entity;
@@ -179,6 +186,8 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
             }
         }
 
+        Map<ID, Entity> originals = new HashMap<>();
+
         for (Entity entity : entities) {
             Objects.requireNonNull(entity, "Entity cannot be null");
             Objects.requireNonNull(entity.getId(), "Entity ID cannot be null");
@@ -190,8 +199,12 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
                 preHook.run(entity);
             }
 
+            if (fieldChangeHooks != null && !fieldChangeHooks.isEmpty()) {
+                originals.put(entity.getId(), (Entity) entity.saveOrGetCopy());
+            }
+
             for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
-                fieldChangeHook.runPreChange(entity);
+                fieldChangeHook.runPreChange(entity, originals.get(entity.getId()));
             }
         }
 
@@ -205,7 +218,7 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
             }
 
             for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
-                fieldChangeHook.runPostChange(entity);
+                fieldChangeHook.runPostChange(entity, originals.get(entity.getId()));
             }
         }
 

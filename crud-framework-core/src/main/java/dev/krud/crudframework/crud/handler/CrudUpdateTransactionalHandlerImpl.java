@@ -41,7 +41,7 @@ public class CrudUpdateTransactionalHandlerImpl implements CrudUpdateTransaction
             onHook.run(entity);
         }
         for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
-            fieldChangeHook.runOnChange(entity);
+            fieldChangeHook.runOnChange(entity, entity.saveOrGetCopy());
         }
 
         return crudHelper.getCrudDaoForEntity(entity.getClass()).saveOrUpdate(entity);
@@ -66,7 +66,7 @@ public class CrudUpdateTransactionalHandlerImpl implements CrudUpdateTransaction
             onHook.run(entity, object);
         }
         for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
-            fieldChangeHook.runOnChange(entity);
+            fieldChangeHook.runOnChange(entity, entity.saveOrGetCopy());
         }
 
         return crudHelper.getCrudDaoForEntity(clazz).saveOrUpdate(entity);

@@ -30,7 +30,7 @@ public class CrudCreateTransactionalHandlerImpl implements CrudCreateTransaction
         }
 
         for(FieldChangeHook fieldChangeHook : fieldChangeHooks) {
-            fieldChangeHook.runOnChange(entity);
+            fieldChangeHook.runOnChange(entity, entity.generateEmptyEntity());
         }
 
         return crudHelper.getCrudDaoForEntity(entity.getClass()).saveOrUpdate(entity);
@@ -49,7 +49,7 @@ public class CrudCreateTransactionalHandlerImpl implements CrudCreateTransaction
         }
 
         for(FieldChangeHook fieldChangeHook : fieldChangeHooks) {
-            fieldChangeHook.runOnChange(entity);
+            fieldChangeHook.runOnChange(entity, entity.generateEmptyEntity());
         }
 
         return crudHelper.getCrudDaoForEntity(clazz).saveOrUpdate(entity);
@@ -59,7 +59,7 @@ public class CrudCreateTransactionalHandlerImpl implements CrudCreateTransaction
     @Transactional(readOnly = false)
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkCreateTransactional(List<Entity> entities, List<CreateHooks> hooks, List<FieldChangeHook> fieldChangeHooks) {
         hooks.forEach(hook -> entities.forEach(hook::onCreate));
-        fieldChangeHooks.forEach(hook -> entities.forEach(hook::runOnChange));
+        fieldChangeHooks.forEach(hook -> entities.forEach(entity -> hook.runPreChange(entity, entity.generateEmptyEntity())));
         return crudHelper.getCrudDaoForEntity(entities.get(0).getClass()).saveOrUpdate(entities);
     }
 }
