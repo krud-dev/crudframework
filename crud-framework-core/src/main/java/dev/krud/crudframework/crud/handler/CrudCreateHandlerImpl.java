@@ -55,7 +55,7 @@ public class CrudCreateHandlerImpl implements CrudCreateHandler {
 
         List<FieldChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(entity.getClass());
         for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
-            fieldChangeHook.runPreChange(entity);
+            fieldChangeHook.runPreChange(entity, entity.generateEmptyEntity());
         }
 
         entity = crudCreateTransactionalHandler.createTransactional(entity, hooks.getOnHooks(), fieldChangeHooks);
@@ -63,7 +63,7 @@ public class CrudCreateHandlerImpl implements CrudCreateHandler {
             postHook.run(entity);
         }
         for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
-            fieldChangeHook.runPostChange(entity);
+            fieldChangeHook.runPostChange(entity, entity.generateEmptyEntity());
         }
 
         return entity;
@@ -86,11 +86,11 @@ public class CrudCreateHandlerImpl implements CrudCreateHandler {
         hooks.forEach(hook -> entities.forEach(hook::preCreate));
 
         List<FieldChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(entityClazz);
-        fieldChangeHooks.forEach(hook -> entities.forEach(hook::runPreChange));
+        fieldChangeHooks.forEach(hook -> entities.forEach(entity -> hook.runPreChange(entity, entity.generateEmptyEntity())));
 
         List<Entity> createdEntities = crudCreateTransactionalHandler.bulkCreateTransactional(entities, hooks, fieldChangeHooks);
         hooks.forEach(hook -> createdEntities.forEach(hook::postCreate));
-        fieldChangeHooks.forEach(hook -> createdEntities.forEach(hook::runPostChange));
+        fieldChangeHooks.forEach(hook -> createdEntities.forEach(entity -> hook.runPostChange(entity, entity.generateEmptyEntity())));
         return createdEntities;
     }
 
@@ -120,7 +120,7 @@ public class CrudCreateHandlerImpl implements CrudCreateHandler {
             postHook.run(entity);
         }
         for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
-            fieldChangeHook.runPostChange(entity);
+            fieldChangeHook.runPostChange(entity, entity.generateEmptyEntity());
         }
 
         return entity;

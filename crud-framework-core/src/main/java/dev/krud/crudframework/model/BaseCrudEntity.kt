@@ -33,6 +33,17 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
         return copy
     }
 
+    fun generateEmptyEntity(): BaseCrudEntity<ID>? {
+        try {
+            val emptyEntity = javaClass.newInstance()
+            emptyEntity.isCopy = true
+            return emptyEntity // ImmutableBean.create(internalCopy) as BaseCrudEntity<ID>
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
     open fun getCacheKey(): String? {
         return getCacheKey(javaClass, id)
     }
