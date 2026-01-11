@@ -110,8 +110,24 @@ class JpaDaoImpl : CrudDao {
                 equal(root.getExpressionByFieldName(filterField.fieldName), filterField.value1())
             }
 
+            FilterFieldOperation.EqualIgnoreCase -> {
+                val path = root.getExpressionByFieldName(filterField.fieldName) as Path<String>
+                equal(
+                    lower(path),
+                    filterField.value1()?.toString()?.lowercase()
+                )
+            }
+
             FilterFieldOperation.NotEqual -> {
                 notEqual(root.getExpressionByFieldName(filterField.fieldName), filterField.value1())
+            }
+
+            FilterFieldOperation.NotEqualIgnoreCase -> {
+                val path = root.getExpressionByFieldName(filterField.fieldName) as Path<String>
+                notEqual(
+                    lower(path),
+                    filterField.value1()?.toString()?.lowercase()
+                )
             }
 
             FilterFieldOperation.In -> {

@@ -60,8 +60,14 @@ fun FilterField.filtersMatch(target: Any): Boolean {
         FilterFieldOperation.Equal -> {
             return actualValue == this.value1()
         }
+        FilterFieldOperation.EqualIgnoreCase -> {
+            return actualValue.toString().lowercase() == this.value1().toString().lowercase()
+        }
         FilterFieldOperation.NotEqual -> {
             return actualValue != this.value1()
+        }
+        FilterFieldOperation.NotEqualIgnoreCase -> {
+            return actualValue.toString().lowercase() != this.value1().toString().lowercase()
         }
         FilterFieldOperation.In -> {
             return this.value1() in actualValue as Collection<*>
