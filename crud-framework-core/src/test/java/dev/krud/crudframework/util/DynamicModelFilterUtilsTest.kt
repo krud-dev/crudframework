@@ -66,6 +66,32 @@ class DynamicModelFilterUtilsTest {
     }
 
     @Test
+    fun `test EqualIgnoreCase operation happy flow`() {
+        val customer = Customer()
+        val filter = where<Customer> {
+            Customer::address Sub {
+                Address::street EqualIgnoreCase "example street"
+            }
+        }
+        expectThat(
+            filter.filtersMatch(customer)
+        ).isTrue()
+    }
+
+    @Test
+    fun `test EqualIgnoreCase operation with false outcome`() {
+        val customer = Customer()
+        val filter = where<Customer> {
+            Customer::address Sub {
+                Address::street Equal "example"
+            }
+        }
+        expectThat(
+            filter.filtersMatch(customer)
+        ).isFalse()
+    }
+
+    @Test
     fun `test NotEqual operation happy flow`() {
         val customer = Customer()
         val filter = where<Customer> {
@@ -84,6 +110,32 @@ class DynamicModelFilterUtilsTest {
         val filter = where<Customer> {
             Customer::address Sub {
                 Address::street NotEqual "Example Street"
+            }
+        }
+        expectThat(
+            filter.filtersMatch(customer)
+        ).isFalse()
+    }
+
+    @Test
+    fun `test NotEqualIgnoreCase operation happy flow`() {
+        val customer = Customer()
+        val filter = where<Customer> {
+            Customer::address Sub {
+                Address::street NotEqualIgnoreCase "example"
+            }
+        }
+        expectThat(
+            filter.filtersMatch(customer)
+        ).isTrue()
+    }
+
+    @Test
+    fun `test NotEqualIgnoreCase operation with false outcome`() {
+        val customer = Customer()
+        val filter = where<Customer> {
+            Customer::address Sub {
+                Address::street NotEqualIgnoreCase "example street"
             }
         }
         expectThat(

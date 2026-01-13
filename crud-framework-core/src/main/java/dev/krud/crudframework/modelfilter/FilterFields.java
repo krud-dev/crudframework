@@ -26,6 +26,10 @@ public final class FilterFields {
 		return createFilterField(fieldName, FilterFieldOperation.Equal, FilterFieldDataType.String, null, value);
 	}
 
+    public static FilterField eqic(String fieldName, String value) {
+        return createFilterField(fieldName, FilterFieldOperation.EqualIgnoreCase, FilterFieldDataType.String, null, value);
+    }
+
 	public static FilterField eq(String fieldName, Integer value) {
 		return createFilterField(fieldName, FilterFieldOperation.Equal, FilterFieldDataType.Integer, null, value);
 	}
@@ -61,6 +65,10 @@ public final class FilterFields {
 	public static FilterField ne(String fieldName, String value) {
 		return createFilterField(fieldName, FilterFieldOperation.NotEqual, FilterFieldDataType.String, null, value);
 	}
+
+    public static FilterField neic(String fieldName, String value) {
+        return createFilterField(fieldName, FilterFieldOperation.NotEqualIgnoreCase, FilterFieldDataType.String, null, value);
+    }
 
 	public static FilterField ne(String fieldName, Integer value) {
 		return createFilterField(fieldName, FilterFieldOperation.NotEqual, FilterFieldDataType.Integer, null, value);

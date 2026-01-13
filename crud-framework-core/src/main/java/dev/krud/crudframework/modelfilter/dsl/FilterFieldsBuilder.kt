@@ -22,6 +22,15 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
         )
     }
 
+    infix fun KProperty1<RootType, String?>.EqualIgnoreCase(target: String) {
+        filterFields += FilterField(
+            effectiveName,
+            FilterFieldOperation.EqualIgnoreCase,
+            FilterFieldDataType.String,
+            target
+        )
+    }
+
     infix fun KProperty1<RootType, Int?>.Equal(target: Int) {
         filterFields += FilterField(
             effectiveName,
@@ -89,6 +98,15 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
         filterFields += FilterField(
             effectiveName,
             FilterFieldOperation.NotEqual,
+            FilterFieldDataType.String,
+            target
+        )
+    }
+
+    infix fun KProperty1<RootType, String?>.NotEqualIgnoreCase(target: String) {
+        filterFields += FilterField(
+            effectiveName,
+            FilterFieldOperation.NotEqualIgnoreCase,
             FilterFieldDataType.String,
             target
         )

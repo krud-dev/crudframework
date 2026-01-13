@@ -57,6 +57,21 @@ class FilterFieldDslTest {
     }
 
     @Test
+    fun `test EqualIgnoreCase#String`() {
+        val filterField = and<TestClazz> {
+            TestClazz::testString EqualIgnoreCase "value"
+        }.children.first()
+
+        filterField.runAssertions(
+            "testString",
+            FilterFieldOperation.EqualIgnoreCase,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
     fun `test Equal#Int`() {
         val filterField = and<TestClazz> {
             TestClazz::testInt Equal 1
@@ -156,6 +171,21 @@ class FilterFieldDslTest {
         filterField.runAssertions(
             "testString",
             FilterFieldOperation.NotEqual,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
+    fun `test NotEqualIgnoreCase#String`() {
+        val filterField = and<TestClazz> {
+            TestClazz::testString NotEqualIgnoreCase "value"
+        }.children.first()
+
+        filterField.runAssertions(
+            "testString",
+            FilterFieldOperation.NotEqualIgnoreCase,
             FilterFieldDataType.String,
             1,
             arrayOf("value")
