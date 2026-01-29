@@ -8,7 +8,7 @@ import dev.krud.crudframework.modelfilter.dsl.annotation.FilterFieldDsl
 
 @FilterFieldDsl
 class ModelFilterBuilder<RootType : PersistentEntity>(
-    var orders: MutableSet<OrderDTO> = mutableSetOf(),
+    var orders: MutableList<OrderDTO> = mutableListOf(),
     var start: Long = 0,
     var limit: Long = 10000,
     var filterFields: MutableList<FilterField> = mutableListOf()

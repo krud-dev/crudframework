@@ -207,7 +207,7 @@ public abstract class AbstractMongoBaseDao {
 		}
 	}
 
-	protected void setOrder(Query query, Set<OrderDTO> orders) {
+	protected void setOrder(Query query, List<OrderDTO> orders) {
 		List<Sort.Order> sortOrders = new ArrayList<>();
 		for (OrderDTO order : orders) {
 			if(order.getBy() != null && !order.getBy().trim().isEmpty()) {
