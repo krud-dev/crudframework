@@ -1,16 +1,16 @@
 package dev.krud.crudframework.modelfilter
 
 class DynamicModelFilter(
-    var start: Long? = null,
-    var limit: Long? = null,
-    var orders: MutableSet<OrderDTO> = mutableSetOf(),
-    val filterFields: MutableList<FilterField> = mutableListOf()
+        var start: Long? = null,
+        var limit: Long? = null,
+        var orders: MutableList<OrderDTO> = mutableListOf(),
+        val filterFields: MutableList<FilterField> = mutableListOf()
 ) {
     val cacheKey: String get() = "CacheKey_" + this.javaClass.simpleName + "_" + this.hashCode()
 
-    constructor() : this(null, null, mutableSetOf(), mutableListOf())
+    constructor() : this(null, null, mutableListOf(), mutableListOf())
 
-    constructor(filterFields: MutableList<FilterField>) : this(null, null, mutableSetOf(), filterFields)
+    constructor(filterFields: MutableList<FilterField>) : this(null, null, mutableListOf(), filterFields)
 
     fun add(filterField: FilterField): DynamicModelFilter {
         filterFields.add(filterField)
