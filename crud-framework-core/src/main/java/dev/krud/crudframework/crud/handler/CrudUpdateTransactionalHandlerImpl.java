@@ -1,7 +1,7 @@
 package dev.krud.crudframework.crud.handler;
 
 import dev.krud.crudframework.crud.exception.CrudUpdateException;
-import dev.krud.crudframework.crud.hooks.interfaces.FieldChangeHook;
+import dev.krud.crudframework.crud.hooks.interfaces.AbstractChangeHook;
 import dev.krud.crudframework.crud.hooks.update.CRUDOnUpdateHook;
 import dev.krud.crudframework.crud.hooks.update.from.CRUDOnUpdateFromHook;
 import dev.krud.crudframework.crud.policy.PolicyRuleType;
@@ -25,7 +25,7 @@ public class CrudUpdateTransactionalHandlerImpl implements CrudUpdateTransaction
 
     @Override
     @Transactional(readOnly = false)
-    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateTransactional(Entity entity, DynamicModelFilter filter, List<CRUDOnUpdateHook<ID, Entity>> onHooks, List<FieldChangeHook> fieldChangeHooks, boolean applyPolicies) {
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateTransactional(Entity entity, DynamicModelFilter filter, List<CRUDOnUpdateHook<ID, Entity>> onHooks, List<AbstractChangeHook> fieldChangeHooks, boolean applyPolicies) {
         // check id exists and has access to entity
         Entity existingEntity = crudHelper.getEntity(filter, (Class<Entity>) entity.getClass(), true);
 
@@ -40,7 +40,7 @@ public class CrudUpdateTransactionalHandlerImpl implements CrudUpdateTransaction
         for (CRUDOnUpdateHook<ID, Entity> onHook : onHooks) {
             onHook.run(entity);
         }
-        for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+        for (AbstractChangeHook fieldChangeHook : fieldChangeHooks) {
             fieldChangeHook.runOnChange(entity, entity.saveOrGetCopy());
         }
 
@@ -49,7 +49,7 @@ public class CrudUpdateTransactionalHandlerImpl implements CrudUpdateTransaction
 
     @Override
     @Transactional(readOnly = false)
-    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateFromTransactional(DynamicModelFilter filter, Object object, Class<Entity> clazz, List<CRUDOnUpdateFromHook<ID, Entity>> onHooks, List<FieldChangeHook> fieldChangeHooks, boolean applyPolicies) {
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateFromTransactional(DynamicModelFilter filter, Object object, Class<Entity> clazz, List<CRUDOnUpdateFromHook<ID, Entity>> onHooks, List<AbstractChangeHook> fieldChangeHooks, boolean applyPolicies) {
         Entity entity = crudHelper.getEntity(filter, clazz, null);
 
         if (entity == null) {
@@ -65,7 +65,7 @@ public class CrudUpdateTransactionalHandlerImpl implements CrudUpdateTransaction
         for (CRUDOnUpdateFromHook<ID, Entity> onHook : onHooks) {
             onHook.run(entity, object);
         }
-        for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+        for (AbstractChangeHook fieldChangeHook : fieldChangeHooks) {
             fieldChangeHook.runOnChange(entity, entity.saveOrGetCopy());
         }
 
@@ -74,7 +74,7 @@ public class CrudUpdateTransactionalHandlerImpl implements CrudUpdateTransaction
 
     @Override
     @Transactional(readOnly = false)
-    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkUpdateTransactional(List<Entity> entities, DynamicModelFilter filter, List<CRUDOnUpdateHook<ID, Entity>> onHooks, List<FieldChangeHook> fieldChangeHooks, boolean applyPolicies) {
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkUpdateTransactional(List<Entity> entities, DynamicModelFilter filter, List<CRUDOnUpdateHook<ID, Entity>> onHooks, List<AbstractChangeHook> fieldChangeHooks, boolean applyPolicies) {
         if (entities.isEmpty()) {
             throw new IllegalStateException("Cannot update an empty list of entities");
         }

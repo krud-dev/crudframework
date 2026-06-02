@@ -3,7 +3,7 @@ package dev.krud.crudframework.crud.hooks.interfaces
 import dev.krud.crudframework.model.BaseCrudEntity
 import kotlin.reflect.KProperty1
 
-abstract class FieldChangeHook<PropertyType, Entity : BaseCrudEntity<*>>(val property: KProperty1<Entity, PropertyType>) {
+abstract class FieldChangeHook<PropertyType, Entity : BaseCrudEntity<*>>(val property: KProperty1<Entity, PropertyType>) : AbstractChangeHook<Entity>() {
     open fun preChange(originalValue: PropertyType?, newValue: PropertyType?, entity: Entity) {}
     open fun onChange(originalValue: PropertyType?, newValue: PropertyType?, entity: Entity) {}
     open fun postChange(originalValue: PropertyType?, newValue: PropertyType?, entity: Entity) {}
@@ -14,21 +14,21 @@ abstract class FieldChangeHook<PropertyType, Entity : BaseCrudEntity<*>>(val pro
         return originalValue != newValue
     }
 
-    fun runPreChange(entity: Entity, original: Entity) {
+    override fun runPreChange(entity: Entity, original: Entity) {
         val originalValue = property.getValue(original)
         val newValue = property.getValue(entity)
         if(originalValue == newValue) return
         preChange(originalValue, newValue, entity)
     }
 
-    fun runOnChange(entity: Entity, original: Entity) {
+    override fun runOnChange(entity: Entity, original: Entity) {
         val originalValue = property.getValue(original)
         val newValue = property.getValue(entity)
         if(originalValue == newValue) return
         onChange(originalValue, newValue, entity)
     }
 
-    fun runPostChange(entity: Entity, original: Entity) {
+    override fun runPostChange(entity: Entity, original: Entity) {
         val originalValue = property.getValue(original)
         val newValue = property.getValue(entity)
         if(originalValue == newValue) return

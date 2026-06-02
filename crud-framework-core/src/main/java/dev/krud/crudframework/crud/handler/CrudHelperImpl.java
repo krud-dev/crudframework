@@ -9,7 +9,7 @@ import dev.krud.crudframework.crud.exception.CrudException;
 import dev.krud.crudframework.crud.exception.CrudInvalidStateException;
 import dev.krud.crudframework.crud.exception.CrudTransformationException;
 import dev.krud.crudframework.crud.hooks.interfaces.CRUDHooks;
-import dev.krud.crudframework.crud.hooks.interfaces.FieldChangeHook;
+import dev.krud.crudframework.crud.hooks.interfaces.AbstractChangeHook;
 import dev.krud.crudframework.crud.hooks.interfaces.FieldChangeHooks;
 import dev.krud.crudframework.crud.model.EntityCacheMetadata;
 import dev.krud.crudframework.crud.model.EntityMetadataDTO;
@@ -105,8 +105,8 @@ public class CrudHelperImpl implements CrudHelper, InitializingBean {
     }
 
     @Override
-    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<FieldChangeHook> getFieldChangeHooks(Class<Entity> entityClazz) {
-        List<FieldChangeHook> fieldChangeHooks = new ArrayList<>();
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<AbstractChangeHook> getFieldChangeHooks(Class<Entity> entityClazz) {
+        List<AbstractChangeHook> fieldChangeHooks = new ArrayList<>();
         List<FieldChangeHooks> fieldChangeHooksList = getHooks(FieldChangeHooks.class, entityClazz);
 
         if (fieldChangeHooksList != null && !fieldChangeHooksList.isEmpty()) {

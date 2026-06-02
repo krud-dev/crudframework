@@ -2,7 +2,7 @@ package dev.krud.crudframework.crud.handler;
 
 import dev.krud.crudframework.crud.exception.CrudUpdateException;
 import dev.krud.crudframework.crud.hooks.HooksDTO;
-import dev.krud.crudframework.crud.hooks.interfaces.FieldChangeHook;
+import dev.krud.crudframework.crud.hooks.interfaces.AbstractChangeHook;
 import dev.krud.crudframework.crud.hooks.interfaces.UpdateFromHooks;
 import dev.krud.crudframework.crud.hooks.interfaces.UpdateHooks;
 import dev.krud.crudframework.crud.hooks.update.CRUDOnUpdateHook;
@@ -91,13 +91,13 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 			preHook.run(entity);
 		}
 
-        List<FieldChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(entity.getClass());
+        List<AbstractChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(entity.getClass());
         Entity original = null;
-        if (fieldChangeHooks != null && !fieldChangeHooks.isEmpty()) {
+        if (!fieldChangeHooks.isEmpty()) {
             original = (Entity) entity.saveOrGetCopy();
         }
 
-        for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+        for (AbstractChangeHook fieldChangeHook : fieldChangeHooks) {
             fieldChangeHook.runPreChange(entity, original);
         }
 
@@ -109,7 +109,7 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 			postHook.run(entity);
 		}
 
-        for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+        for (AbstractChangeHook fieldChangeHook : fieldChangeHooks) {
             fieldChangeHook.runPostChange(entity, original);
         }
 
@@ -142,7 +142,7 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 			preHook.run(id, object);
 		}
 
-        List<FieldChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(clazz);
+        List<AbstractChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(clazz);
 
 		Entity entity = crudUpdateTransactionalHandler.updateFromTransactional(filter, object, clazz, hooks.getOnHooks(), fieldChangeHooks, applyPolicies);
 
@@ -151,7 +151,7 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 		for(CRUDPostUpdateFromHook<ID, Entity> postHook : hooks.getPostHooks()) {
 			postHook.run(entity);
 		}
-        for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+        for (AbstractChangeHook fieldChangeHook : fieldChangeHooks) {
             fieldChangeHook.runPostChange(entity, entity.saveOrGetCopy());
         }
 
@@ -165,7 +165,7 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
         }
 
         Class<Entity> entityClazz = (Class<Entity>) entities.get(0).getClass();
-        List<FieldChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(entityClazz);
+        List<AbstractChangeHook> fieldChangeHooks = crudHelper.getFieldChangeHooks(entityClazz);
         DynamicModelFilter filter = new DynamicModelFilter()
                 .add(FilterFields.in("id", FilterFieldDataType.get(entities.get(0).getId().getClass()), entities.stream().map(BaseCrudEntity::getId).toArray()));
 
@@ -199,11 +199,11 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
                 preHook.run(entity);
             }
 
-            if (fieldChangeHooks != null && !fieldChangeHooks.isEmpty()) {
+            if (!fieldChangeHooks.isEmpty()) {
                 originals.put(entity.getId(), (Entity) entity.saveOrGetCopy());
             }
 
-            for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+            for (AbstractChangeHook fieldChangeHook : fieldChangeHooks) {
                 fieldChangeHook.runPreChange(entity, originals.get(entity.getId()));
             }
         }
@@ -217,7 +217,7 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
                 postHook.run(entity);
             }
 
-            for (FieldChangeHook fieldChangeHook : fieldChangeHooks) {
+            for (AbstractChangeHook fieldChangeHook : fieldChangeHooks) {
                 fieldChangeHook.runPostChange(entity, originals.get(entity.getId()));
             }
         }

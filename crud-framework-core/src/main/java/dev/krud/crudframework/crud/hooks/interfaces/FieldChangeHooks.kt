@@ -4,5 +4,5 @@ import dev.krud.crudframework.model.BaseCrudEntity
 import java.io.Serializable
 
 interface FieldChangeHooks<ID : Serializable, Entity : BaseCrudEntity<ID>> : CRUDHooks<ID, Entity> {
-    fun registeredFieldChangeHooks(): List<FieldChangeHook<*, *>>
+    fun registeredFieldChangeHooks(): List<AbstractChangeHook<*>>
 }
