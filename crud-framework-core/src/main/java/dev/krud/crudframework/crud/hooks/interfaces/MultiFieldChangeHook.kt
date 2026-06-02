@@ -43,6 +43,7 @@ abstract class MultiFieldChangeHook<Entity : BaseCrudEntity<*>>(
     @Suppress("UNCHECKED_CAST")
     private fun makeImmutable(entity: Entity): Entity {
         val proxyFactory = ProxyFactory(entity)
+        proxyFactory.isProxyTargetClass = true
         proxyFactory.addAdvice(MethodInterceptor { invocation ->
             if (invocation.method.name.startsWith("set")) {
                 throw UnsupportedOperationException("Cannot modify the original entity inside a MultiFieldChangeHook callback")
