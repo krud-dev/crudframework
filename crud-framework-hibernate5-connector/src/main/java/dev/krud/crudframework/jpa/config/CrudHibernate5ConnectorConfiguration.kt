@@ -1,6 +1,7 @@
 package dev.krud.crudframework.jpa.config
 
 import dev.krud.crudframework.crud.handler.CrudDao
+import dev.krud.crudframework.jpa.association.ReadOnlyAssociationsPersistentHooks
 import dev.krud.crudframework.jpa.dao.JpaDaoImpl
 import dev.krud.crudframework.jpa.lazyinitializer.LazyInitializerPersistentHooks
 import org.springframework.context.annotation.Bean
@@ -13,4 +14,7 @@ class CrudHibernate5ConnectorConfiguration {
 
     @Bean
     fun lazyInitializerPersistentHooks(): LazyInitializerPersistentHooks = LazyInitializerPersistentHooks()
+
+    @Bean
+    fun readOnlyAssociationsPersistentHooks(): ReadOnlyAssociationsPersistentHooks = ReadOnlyAssociationsPersistentHooks()
 }
