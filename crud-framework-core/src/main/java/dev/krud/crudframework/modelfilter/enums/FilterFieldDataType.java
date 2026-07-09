@@ -2,6 +2,7 @@ package dev.krud.crudframework.modelfilter.enums;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ public enum FilterFieldDataType {
     Double(java.lang.Double.class),
     Boolean(java.lang.Boolean.class),
     Date(java.util.Date.class),
+    LocalDate(java.time.LocalDate.class),
     Object(java.lang.Object.class),
     Enum(java.lang.Enum.class),
     UUID(java.util.UUID.class),
@@ -54,6 +56,8 @@ public enum FilterFieldDataType {
             return FilterFieldDataType.Double;
         } else if (java.util.Date.class.equals(clazz)) {
             return FilterFieldDataType.Date;
+        } else if (java.time.LocalDate.class.equals(clazz)) {
+            return FilterFieldDataType.LocalDate;
         } else if (boolean.class.equals(clazz) || Boolean.class.equals(clazz)) {
             return FilterFieldDataType.Boolean;
         } else if (Enum.class.isAssignableFrom(clazz)) {

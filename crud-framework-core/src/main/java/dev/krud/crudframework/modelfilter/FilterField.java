@@ -8,6 +8,7 @@ import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -177,6 +178,11 @@ public class FilterField implements Serializable {
 					return field;
 				}
 				return new Date(Long.parseLong(field.toString()));
+			case LocalDate:
+				if(field instanceof LocalDate) {
+					return field;
+				}
+				return LocalDate.parse(field.toString());
 			case Boolean:
 				return Boolean.parseBoolean(field.toString());
 			case Object:

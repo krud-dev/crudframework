@@ -5,6 +5,7 @@ import dev.krud.crudframework.modelfilter.FilterField
 import dev.krud.crudframework.modelfilter.dsl.annotation.FilterFieldDsl
 import dev.krud.crudframework.modelfilter.enums.FilterFieldDataType
 import dev.krud.crudframework.modelfilter.enums.FilterFieldOperation
+import java.time.LocalDate
 import java.util.Date
 import java.util.UUID
 import kotlin.reflect.KProperty
@@ -72,6 +73,15 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
             effectiveName,
             FilterFieldOperation.Equal,
             FilterFieldDataType.Date,
+            target
+        )
+    }
+
+    infix fun KProperty1<RootType, LocalDate?>.Equal(target: LocalDate) {
+        filterFields += FilterField(
+            effectiveName,
+            FilterFieldOperation.Equal,
+            FilterFieldDataType.LocalDate,
             target
         )
     }
@@ -157,6 +167,15 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
         )
     }
 
+    infix fun KProperty1<RootType, LocalDate?>.NotEqual(target: LocalDate) {
+        filterFields += FilterField(
+            effectiveName,
+            FilterFieldOperation.NotEqual,
+            FilterFieldDataType.LocalDate,
+            target
+        )
+    }
+
     infix fun <EnumType : Enum<EnumType>> KProperty1<RootType, EnumType?>.NotEqual(target: EnumType) {
         filterFields += FilterField(
             effectiveName,
@@ -220,6 +239,15 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
         )
     }
 
+    infix fun KProperty1<RootType, LocalDate?>.GreaterThan(target: LocalDate) {
+        filterFields += FilterField(
+            effectiveName,
+            FilterFieldOperation.GreaterThan,
+            FilterFieldDataType.LocalDate,
+            target
+        )
+    }
+
     infix fun KProperty1<RootType, Int?>.GreaterOrEqual(target: Int) {
         filterFields += FilterField(
             effectiveName,
@@ -252,6 +280,15 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
             effectiveName,
             FilterFieldOperation.GreaterEqual,
             FilterFieldDataType.Date,
+            target
+        )
+    }
+
+    infix fun KProperty1<RootType, LocalDate?>.GreaterOrEqual(target: LocalDate) {
+        filterFields += FilterField(
+            effectiveName,
+            FilterFieldOperation.GreaterEqual,
+            FilterFieldDataType.LocalDate,
             target
         )
     }
@@ -292,6 +329,15 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
         )
     }
 
+    infix fun KProperty1<RootType, LocalDate?>.LowerThan(target: LocalDate) {
+        filterFields += FilterField(
+            effectiveName,
+            FilterFieldOperation.LowerThan,
+            FilterFieldDataType.LocalDate,
+            target
+        )
+    }
+
     infix fun KProperty1<RootType, Int?>.LowerOrEqual(target: Int) {
         filterFields += FilterField(
             effectiveName,
@@ -324,6 +370,15 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
             effectiveName,
             FilterFieldOperation.LowerEqual,
             FilterFieldDataType.Date,
+            target
+        )
+    }
+
+    infix fun KProperty1<RootType, LocalDate?>.LowerOrEqual(target: LocalDate) {
+        filterFields += FilterField(
+            effectiveName,
+            FilterFieldOperation.LowerEqual,
+            FilterFieldDataType.LocalDate,
             target
         )
     }
@@ -366,6 +421,15 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
 
     @JvmName("dateRequireIn")
     infix fun KProperty1<RootType, Date?>.RequireIn(target: Collection<Date>) {
+        if (target.isEmpty()) {
+            noop()
+        } else {
+            this.In(target)
+        }
+    }
+
+    @JvmName("localDateRequireIn")
+    infix fun KProperty1<RootType, LocalDate?>.RequireIn(target: Collection<LocalDate>) {
         if (target.isEmpty()) {
             noop()
         } else {
@@ -429,6 +493,15 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
 
     @JvmName("dateRequireNotIn")
     infix fun KProperty1<RootType, Date?>.RequireNotIn(target: Collection<Date>) {
+        if (target.isEmpty()) {
+            noop()
+        } else {
+            this.NotIn(target)
+        }
+    }
+
+    @JvmName("localDateRequireNotIn")
+    infix fun KProperty1<RootType, LocalDate?>.RequireNotIn(target: Collection<LocalDate>) {
         if (target.isEmpty()) {
             noop()
         } else {
@@ -504,6 +577,16 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
         )
     }
 
+    @JvmName("localDateIn")
+    infix fun KProperty1<RootType, LocalDate?>.In(target: Collection<LocalDate>) {
+        filterFields += FilterField(
+            effectiveName,
+            FilterFieldOperation.In,
+            FilterFieldDataType.LocalDate,
+            *target.toTypedArray()
+        )
+    }
+
     @JvmName("enumIn")
     infix fun <EnumType : Enum<EnumType>> KProperty1<RootType, EnumType?>.In(target: Collection<EnumType>) {
         filterFields += FilterField(
@@ -574,6 +657,16 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
         )
     }
 
+    @JvmName("localDateNotIn")
+    infix fun KProperty1<RootType, LocalDate?>.NotIn(target: Collection<LocalDate>) {
+        filterFields += FilterField(
+            effectiveName,
+            FilterFieldOperation.NotIn,
+            FilterFieldDataType.LocalDate,
+            *target.toTypedArray()
+        )
+    }
+
     @JvmName("enumNotIn")
     infix fun <EnumType : Enum<EnumType>> KProperty1<RootType, EnumType?>.NotIn(target: Collection<EnumType>) {
         filterFields += FilterField(
@@ -608,6 +701,10 @@ class FilterFieldsBuilder<RootType : PersistentEntity>(private val filterFields:
 
     infix fun KProperty1<RootType, Date?>.Between(target: Date): BetweenBuilder<Date> {
         return BetweenBuilder(effectiveName, target, FilterFieldDataType.Date)
+    }
+
+    infix fun KProperty1<RootType, LocalDate?>.Between(target: LocalDate): BetweenBuilder<LocalDate> {
+        return BetweenBuilder(effectiveName, target, FilterFieldDataType.LocalDate)
     }
 
     infix fun KProperty1<RootType, *>.isNull(condition: Boolean) {
