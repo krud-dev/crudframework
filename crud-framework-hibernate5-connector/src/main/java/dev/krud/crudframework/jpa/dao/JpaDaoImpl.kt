@@ -175,7 +175,20 @@ class JpaDaoImpl : CrudDao {
             }
 
             FilterFieldOperation.Contains -> {
-                like(root.getExpressionByFieldName(filterField.fieldName) as Path<String>, "%${filterField.value1()}%")
+                val path = root.getExpressionByFieldName(filterField.fieldName)
+                if (Collection::class.java.isAssignableFrom(path.javaType)) {
+                    equal(
+                        function(
+                            "JSON_CONTAINS",
+                            Integer::class.java,
+                            path,
+                            function("JSON_QUOTE", String::class.java, literal(filterField.value1().toString()))
+                        ),
+                        1
+                    )
+                } else {
+                    like(path as Expression<String>, literal("%${filterField.value1()}%"))
+                }
             }
 
             FilterFieldOperation.IsNull -> {
