@@ -13,6 +13,6 @@ public interface CRUDHooks<ID extends Serializable, Entity extends BaseCrudEntit
 	}
 
     default Integer getOrder() {
-        return Integer.MIN_VALUE;
+        return 0;
     }
 }
