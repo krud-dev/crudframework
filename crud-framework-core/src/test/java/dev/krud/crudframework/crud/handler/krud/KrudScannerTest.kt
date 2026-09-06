@@ -42,6 +42,9 @@ class KrudScannerTest {
     @MockBean
     private lateinit var crudDeleteHandler: CrudDeleteHandler
 
+    @MockBean
+    private lateinit var krudRegistry: KrudRegistry
+
     @Autowired
     private lateinit var applicationContext: ApplicationContext
 
