@@ -3,6 +3,7 @@ package dev.krud.crudframework.crud.configuration
 import dev.krud.crudframework.crud.cache.CacheManagerAdapter
 import dev.krud.crudframework.crud.configuration.properties.CrudFrameworkProperties
 import dev.krud.crudframework.crud.handler.*
+import dev.krud.crudframework.crud.handler.krud.KrudRegistry
 import dev.krud.crudframework.crud.policy.Policy
 import dev.krud.crudframework.crud.security.PrincipalProvider
 import dev.krud.crudframework.exception.WrapExceptionAspect
@@ -92,4 +93,7 @@ class CrudFrameworkConfiguration {
 
     @Bean
     fun wrapExceptionAspect(): WrapExceptionAspect = WrapExceptionAspect()
+
+    @Bean
+    fun krudRegistry(): KrudRegistry = KrudRegistry()
 }

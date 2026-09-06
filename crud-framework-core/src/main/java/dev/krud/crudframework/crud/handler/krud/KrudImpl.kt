@@ -30,7 +30,8 @@ import org.springframework.beans.factory.InitializingBean
 import java.io.Serializable
 
 open class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
-        private val crudCreateHandler: CrudCreateHandler, private val crudReadHandler: CrudReadHandler, private val crudUpdateHandler: CrudUpdateHandler, private val crudDeleteHandler: CrudDeleteHandler) :
+        private val crudCreateHandler: CrudCreateHandler, private val crudReadHandler: CrudReadHandler, private val crudUpdateHandler: CrudUpdateHandler, private val crudDeleteHandler: CrudDeleteHandler,
+        private val krudRegistry: KrudRegistry) :
         InitializingBean, Krud<Entity, ID> {
     override lateinit var entityClazz: Class<Entity>
 
@@ -38,6 +39,7 @@ open class KrudImpl<Entity : BaseCrudEntity<ID>, ID : Serializable>(
         if (!this::entityClazz.isInitialized) {
             error("entityClazz must be initialized")
         }
+        krudRegistry.register(entityClazz, this)
     }
 
     override fun create(entity: Entity, applyPolicies: Boolean, hooks: HooksDTO<CRUDPreCreateHook<ID, Entity>, CRUDOnCreateHook<ID, Entity>, CRUDPostCreateHook<ID, Entity>>): Entity {
