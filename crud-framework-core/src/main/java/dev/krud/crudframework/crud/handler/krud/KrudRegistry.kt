@@ -10,14 +10,14 @@ import java.util.concurrent.ConcurrentHashMap
  * application context by its parameterized type, which requires a generic-aware scan of every
  * bean definition.
  */
-class KrudRegistry {
+open class KrudRegistry {
     private val kruds = ConcurrentHashMap<Class<*>, Krud<*, *>>()
 
-    fun register(entityClazz: Class<*>, krud: Krud<*, *>) {
+    open fun register(entityClazz: Class<*>, krud: Krud<*, *>) {
         kruds[entityClazz] = krud
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <Entity : BaseCrudEntity<ID>, ID : Serializable> getOrNull(entityClazz: Class<Entity>): Krud<Entity, ID>? =
+    open fun <Entity : BaseCrudEntity<ID>, ID : Serializable> getOrNull(entityClazz: Class<Entity>): Krud<Entity, ID>? =
         kruds[entityClazz] as Krud<Entity, ID>?
 }
