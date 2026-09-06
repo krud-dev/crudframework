@@ -1,5 +1,6 @@
 package dev.krud.crudframework.crud.handler.krud
 
+import dev.krud.crudframework.model.BaseCrudEntity
 import java.io.Serializable
 import java.util.concurrent.ConcurrentHashMap
 
@@ -17,6 +18,6 @@ class KrudRegistry {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <Entity : Any, ID : Serializable> getOrNull(entityClazz: Class<Entity>): Krud<Entity, ID>? =
+    fun <Entity : BaseCrudEntity<ID>, ID : Serializable> getOrNull(entityClazz: Class<Entity>): Krud<Entity, ID>? =
         kruds[entityClazz] as Krud<Entity, ID>?
 }
