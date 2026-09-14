@@ -2,6 +2,7 @@ package dev.krud.crudframework.model
 
 import org.springframework.beans.BeanUtils
 import java.io.Serializable
+import java.lang.reflect.InvocationTargetException
 
 abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializable {
 
@@ -20,7 +21,7 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
                     val internalCopy = javaClass.newInstance()
                     internalCopy.isCopy = true
                     if(id != internalCopy.id) {
-                        BeanUtils.copyProperties(this, internalCopy)
+                        copyPropertiesIgnoringUninitializedLateinit(this, internalCopy)
                     }
                     copy = internalCopy // ImmutableBean.create(internalCopy) as BaseCrudEntity<ID>
                 } else {
@@ -31,6 +32,30 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
             }
         }
         return copy
+    }
+
+    /**
+     * Like [BeanUtils.copyProperties], but copies property-by-property so that an uninitialized
+     * Kotlin `lateinit var` on [source] (which throws [UninitializedPropertyAccessException] when read)
+     * only skips that one property on [target] instead of aborting the entire copy.
+     */
+    private fun copyPropertiesIgnoringUninitializedLateinit(source: Any, target: Any) {
+        for (descriptor in BeanUtils.getPropertyDescriptors(source.javaClass)) {
+            val readMethod = descriptor.readMethod ?: continue
+            val writeMethod = descriptor.writeMethod ?: continue
+            try {
+                writeMethod.invoke(target, readMethod.invoke(source))
+            } catch (e: InvocationTargetException) {
+                if (e.targetException !is UninitializedPropertyAccessException) {
+                    throw e
+                }
+                try {
+                    writeMethod.invoke(target, null)
+                } catch (ignored: IllegalArgumentException) {
+                    // primitive property (e.g. Int/Boolean) - leave the no-arg-constructor default
+                }
+            }
+        }
     }
 
     fun generateEmptyEntity(): BaseCrudEntity<ID>? {
