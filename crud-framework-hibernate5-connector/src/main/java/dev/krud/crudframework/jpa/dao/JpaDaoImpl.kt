@@ -17,6 +17,8 @@ import jakarta.persistence.criteria.Order
 import jakarta.persistence.criteria.Path
 import jakarta.persistence.criteria.Predicate
 import jakarta.persistence.criteria.Root
+import jakarta.persistence.metamodel.Attribute
+import jakarta.persistence.metamodel.PluralAttribute
 
 class JpaDaoImpl : CrudDao {
     @PersistenceContext
@@ -176,7 +178,13 @@ class JpaDaoImpl : CrudDao {
 
             FilterFieldOperation.Contains -> {
                 val path = root.getExpressionByFieldName(filterField.fieldName)
-                if (Collection::class.java.isAssignableFrom(path.javaType)) {
+                val attribute = (path as? Path<*>)?.model
+                if (attribute is PluralAttribute<*, *, *> && attribute.persistentAttributeType == Attribute.PersistentAttributeType.ELEMENT_COLLECTION) {
+                    isMember(
+                        castToElementType(filterField.value1(), attribute.elementType.javaType),
+                        path as Expression<Collection<Any?>>
+                    )
+                } else if (Collection::class.java.isAssignableFrom(path.javaType)) {
                     equal(
                         function(
                             "JSON_CONTAINS",
@@ -227,6 +235,14 @@ class JpaDaoImpl : CrudDao {
         }
 
         return predicate
+    }
+
+    private fun castToElementType(value: Any?, elementType: Class<*>): Any? {
+        if (value == null || elementType.isInstance(value) || !elementType.isEnum) {
+            return value
+        }
+
+        return elementType.enumConstants.first { (it as Enum<*>).name == value.toString() }
     }
 
     private fun From<*, *>.getExpressionByFieldName(fieldName: String): Expression<*> {
