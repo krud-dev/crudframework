@@ -8,12 +8,12 @@ import dev.krud.crudframework.model.PersistentEntity
 import dev.krud.crudframework.modelfilter.FilterField
 import java.security.Principal
 
-class Policy<RootType : PersistentEntity>(
+open class Policy<RootType : PersistentEntity>(
     val name: String,
     val location: PolicyElementLocation,
     val clazz: Class<RootType>,
-    private val filterFields: List<PolicyFilterFields>,
-    private val rules: List<PolicyRule<RootType>>
+    val filterFields: List<PolicyFilterFields>,
+    val rules: List<PolicyRule<RootType>>
 ) {
     private val canAccessRules: List<PolicyRule<RootType>> by lazy {
         rules.filter { it.type == PolicyRuleType.CAN_ACCESS }
@@ -28,7 +28,7 @@ class Policy<RootType : PersistentEntity>(
         rules.filter { it.type == PolicyRuleType.CAN_CREATE }
     }
 
-    fun getFilterFields(principal: Principal?): List<FilterField> {
+    open fun getFilterFields(principal: Principal?): List<FilterField> {
         return filterFields.flatMap { it.supplier(principal) }
     }
 
@@ -58,6 +58,20 @@ class Policy<RootType : PersistentEntity>(
             this,
             ruleResults
         )
+    }
+
+    /**
+     * Whether evaluating rules of [type] involves post conditions. Post conditions run against loaded entities, so they
+     * cannot be expressed as filter fields.
+     */
+    fun hasPostConditions(type: PolicyRuleType): Boolean {
+        val rulesForType = when (type) {
+            PolicyRuleType.CAN_ACCESS -> canAccessRules
+            PolicyRuleType.CAN_CREATE -> return false
+            PolicyRuleType.CAN_UPDATE -> canAccessRules + canUpdateRules
+            PolicyRuleType.CAN_DELETE -> canAccessRules + canDeleteRules
+        }
+        return rulesForType.any { it.postConditions.isNotEmpty() }
     }
 
     fun evaluatePreCanAccess(principal: Principal?): Result<RootType> {
