@@ -3,22 +3,14 @@ package dev.krud.crudframework.jpa.dao
 import dev.krud.crudframework.crud.handler.CrudDao
 import dev.krud.crudframework.model.BaseCrudEntity
 import dev.krud.crudframework.modelfilter.DynamicModelFilter
-import dev.krud.crudframework.modelfilter.FilterField
-import dev.krud.crudframework.modelfilter.enums.FilterFieldOperation
 import java.io.Serializable
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import jakarta.persistence.TypedQuery
 import jakarta.persistence.criteria.CriteriaBuilder
 import jakarta.persistence.criteria.CriteriaQuery
-import jakarta.persistence.criteria.Expression
-import jakarta.persistence.criteria.From
 import jakarta.persistence.criteria.Order
-import jakarta.persistence.criteria.Path
-import jakarta.persistence.criteria.Predicate
 import jakarta.persistence.criteria.Root
-import jakarta.persistence.metamodel.Attribute
-import jakarta.persistence.metamodel.PluralAttribute
 
 class JpaDaoImpl : CrudDao {
     @PersistenceContext
@@ -70,8 +62,7 @@ class JpaDaoImpl : CrudDao {
     private fun CriteriaBuilder.buildQueryFromFilter(filter: DynamicModelFilter, clazz: Class<*>): CriteriaQuery<*> {
         val cq = createQuery()
         val root = cq.from(clazz)
-        val predicates = filter.filterFields
-            .map { processFilterField(it, root) }
+        val predicates = FilterFieldPredicateBuilder.toPredicates(this, filter.filterFields, root)
             .toTypedArray()
         if (predicates.isNotEmpty()) {
             cq.where(*predicates)
@@ -99,165 +90,10 @@ class JpaDaoImpl : CrudDao {
         return filter.orders.mapNotNull {
             val by = it.by ?: return@mapNotNull null
             if (it.descending) {
-                desc(root.getExpressionByFieldName(by))
+                desc(FilterFieldPredicateBuilder.resolveExpression(root, by))
             } else {
-                asc(root.getExpressionByFieldName(by))
+                asc(FilterFieldPredicateBuilder.resolveExpression(root, by))
             }
         }
-    }
-
-    private fun CriteriaBuilder.processFilterField(filterField: FilterField, root: Root<*>): Predicate {
-        val predicate: Predicate = when (filterField.operation) {
-            FilterFieldOperation.Equal -> {
-                equal(root.getExpressionByFieldName(filterField.fieldName), filterField.value1())
-            }
-
-            FilterFieldOperation.EqualIgnoreCase -> {
-                val path = root.getExpressionByFieldName(filterField.fieldName) as Path<String>
-                equal(
-                    lower(path),
-                    filterField.value1()?.toString()?.lowercase()
-                )
-            }
-
-            FilterFieldOperation.NotEqual -> {
-                notEqual(root.getExpressionByFieldName(filterField.fieldName), filterField.value1())
-            }
-
-            FilterFieldOperation.NotEqualIgnoreCase -> {
-                val path = root.getExpressionByFieldName(filterField.fieldName) as Path<String>
-                notEqual(
-                    lower(path),
-                    filterField.value1()?.toString()?.lowercase()
-                )
-            }
-
-            FilterFieldOperation.In -> {
-                `in`(root.getExpressionByFieldName(filterField.fieldName)).value(filterField.values.toList())
-            }
-
-            FilterFieldOperation.NotIn -> {
-                not(`in`(root.getExpressionByFieldName(filterField.fieldName)).value(filterField.values.toList()))
-            }
-
-            FilterFieldOperation.GreaterThan -> {
-                greaterThan(
-                    root.getExpressionByFieldName(filterField.fieldName) as Expression<out Comparable<Any>>,
-                    filterField.value1() as Comparable<Any>
-                )
-            }
-
-            FilterFieldOperation.GreaterEqual -> {
-                greaterThanOrEqualTo(
-                    root.getExpressionByFieldName(filterField.fieldName) as Expression<out Comparable<Any>>,
-                    filterField.value1() as Comparable<Any>
-                )
-            }
-
-            FilterFieldOperation.LowerThan -> {
-                lessThan(
-                    root.getExpressionByFieldName(filterField.fieldName) as Expression<out Comparable<Any>>,
-                    filterField.value1() as Comparable<Any>
-                )
-            }
-
-            FilterFieldOperation.LowerEqual -> {
-                lessThanOrEqualTo(
-                    root.getExpressionByFieldName(filterField.fieldName) as Expression<out Comparable<Any>>,
-                    filterField.value1() as Comparable<Any>
-                )
-            }
-
-            FilterFieldOperation.Between -> {
-                between(
-                    root.getExpressionByFieldName(filterField.fieldName) as Expression<out Comparable<Any>>,
-                    filterField.value1() as Comparable<Any>,
-                    filterField.value2() as Comparable<Any>
-                )
-            }
-
-            FilterFieldOperation.Contains -> {
-                val path = root.getExpressionByFieldName(filterField.fieldName)
-                val attribute = (path as? Path<*>)?.model
-                if (attribute is PluralAttribute<*, *, *> && attribute.persistentAttributeType == Attribute.PersistentAttributeType.ELEMENT_COLLECTION) {
-                    isMember(
-                        castToElementType(filterField.value1(), attribute.elementType.javaType),
-                        path as Expression<Collection<Any?>>
-                    )
-                } else if (Collection::class.java.isAssignableFrom(path.javaType)) {
-                    equal(
-                        function(
-                            "JSON_CONTAINS",
-                            Integer::class.java,
-                            path,
-                            function("JSON_QUOTE", String::class.java, literal(filterField.value1().toString()))
-                        ),
-                        1
-                    )
-                } else {
-                    like(path as Expression<String>, literal("%${filterField.value1()}%"))
-                }
-            }
-
-            FilterFieldOperation.IsNull -> {
-                isNull(root.getExpressionByFieldName(filterField.fieldName))
-            }
-
-            FilterFieldOperation.IsNotNull -> {
-                isNotNull(root.getExpressionByFieldName(filterField.fieldName))
-            }
-
-            FilterFieldOperation.IsEmpty -> {
-                this.isEmpty(root.getExpressionByFieldName(filterField.fieldName) as Path<Collection<*>>)
-            }
-
-            FilterFieldOperation.IsNotEmpty -> {
-                this.isNotEmpty(root.getExpressionByFieldName(filterField.fieldName) as Path<Collection<*>>)
-            }
-
-            FilterFieldOperation.And -> {
-                and(*filterField.children.map { processFilterField(it, root) }.toTypedArray())
-            }
-
-            FilterFieldOperation.Or -> {
-                or(*filterField.children.map { processFilterField(it, root) }.toTypedArray())
-            }
-
-            FilterFieldOperation.Not -> {
-                not(processFilterField(filterField.children.first(), root))
-            }
-
-            FilterFieldOperation.Noop -> {
-                equal(literal(true), literal(false))
-            }
-
-            else -> error("Unknown operation: ${filterField.operation}")
-        }
-
-        return predicate
-    }
-
-    private fun castToElementType(value: Any?, elementType: Class<*>): Any? {
-        if (value == null || elementType.isInstance(value) || !elementType.isEnum) {
-            return value
-        }
-
-        return elementType.enumConstants.first { (it as Enum<*>).name == value.toString() }
-    }
-
-    private fun From<*, *>.getExpressionByFieldName(fieldName: String): Expression<*> {
-        if (!fieldName.contains(".")) {
-            return this.get<Any>(fieldName)
-        }
-
-        var expression = this
-        val parts = fieldName.replace("/",".").split(".")
-        if(parts.size > 1) {
-            for (i in 0 .. parts.size - 2) {
-                expression = expression.joins.find { it.attribute.name == parts[i] } ?: expression.join<Any, Any>(parts[i])
-            }
-        }
-
-        return expression.getExpressionByFieldName(parts[parts.size - 1])
     }
 }

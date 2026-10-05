@@ -97,6 +97,35 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
     }
 
     @Override
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> DynamicModelFilter buildEffectiveReadFilter(DynamicModelFilter filter, Class<Entity> clazz) {
+        if (crudSecurityHandler.hasPostRules(PolicyRuleType.CAN_ACCESS, clazz)) {
+            throw new CrudReadException("Entity of type [ " + clazz.getSimpleName() + " ] has access policies with post conditions, which cannot be applied as a filter");
+        }
+
+        DynamicModelFilter effectiveFilter = new DynamicModelFilter();
+        if (filter != null) {
+            effectiveFilter.getFilterFields().addAll(filter.getFilterFields());
+        }
+
+        // Same steps, in the same order, as indexInternal with applyPolicies and the index transaction's getEntities
+        crudSecurityHandler.evaluatePreRulesAndThrow(PolicyRuleType.CAN_ACCESS, clazz);
+        crudSecurityHandler.decorateFilter(clazz, effectiveFilter);
+        crudHelper.validateAndFillFilterFieldMetadata(effectiveFilter.getFilterFields(), clazz);
+
+        List<IndexHooks> indexHooksList = crudHelper.getHooks(IndexHooks.class, clazz);
+        if (indexHooksList != null) {
+            // indexInternal prepends each entity hook, so they run in reverse registration order
+            for (int i = indexHooksList.size() - 1; i >= 0; i--) {
+                IndexHooks<ID, Entity> indexHooks = indexHooksList.get(i);
+                indexHooks.preIndex(effectiveFilter);
+            }
+        }
+
+        crudHelper.decorateFilter(effectiveFilter, clazz);
+        return effectiveFilter;
+    }
+
+    @Override
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity showByInternal(DynamicModelFilter filter, Class<Entity> clazz,
                                                                                               HooksDTO<CRUDPreShowByHook<ID, Entity>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>> hooks, boolean fromCache, Boolean persistCopy, boolean applyPolicies) {
 

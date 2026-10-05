@@ -13,5 +13,6 @@ interface CrudSecurityHandler {
     fun evaluatePreRulesAndThrow(type: PolicyRuleType, clazz: Class<out PersistentEntity>) = evaluatePreRules(type, clazz).throwIfFailed()
     fun evaluatePostRules(entity: PersistentEntity?, type: PolicyRuleType, clazz: Class<out PersistentEntity>): MultiPolicyResult
     fun evaluatePostRulesAndThrow(entity: PersistentEntity?, type: PolicyRuleType, clazz: Class<out PersistentEntity>) = evaluatePostRules(entity, type, clazz).throwIfFailed()
+    fun hasPostRules(type: PolicyRuleType, clazz: Class<out PersistentEntity>): Boolean = getPolicies(clazz).any { it.hasPostConditions(type) }
     fun decorateFilter(clazz: Class<out PersistentEntity>, filter: DynamicModelFilter)
 }
