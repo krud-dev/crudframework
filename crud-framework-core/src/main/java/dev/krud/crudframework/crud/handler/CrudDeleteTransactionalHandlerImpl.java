@@ -26,7 +26,44 @@ public class CrudDeleteTransactionalHandlerImpl implements CrudDeleteTransaction
     @Transactional(readOnly = false)
     public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity deleteHardTransactional(DynamicModelFilter filter, Class<Entity> clazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks, boolean applyPolicies) {
         Entity entity = getEntityForDeletion(filter, clazz, applyPolicies);
+        return deleteHard(entity, clazz, onHooks);
+    }
 
+    @Override
+    @Transactional(readOnly = false)
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity deleteSoftTransactional(DynamicModelFilter filter, Field deleteField, Class<Entity> clazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks, boolean applyPolicies) {
+        Entity entity = getEntityForDeletion(filter, clazz, applyPolicies);
+        return deleteSoft(entity, deleteField, clazz, onHooks);
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkDeleteHardTransactional(DynamicModelFilter filter, Class<Entity> entityClazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks, boolean applyPolicies) {
+        List<Entity> entities = getEntitiesForDeletion(filter, entityClazz, applyPolicies);
+
+        List<Entity> result = new ArrayList<>();
+        for(Entity entity : entities) {
+            result.add(deleteHard(entity, entityClazz, onHooks));
+        }
+
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkDeleteSoftTransactional(DynamicModelFilter filter, Field deleteField, Class<Entity> entityClazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks, boolean applyPolicies) {
+        List<Entity> entities = getEntitiesForDeletion(filter, entityClazz, applyPolicies);
+
+        List<Entity> result = new ArrayList<>();
+        for(Entity entity : entities) {
+            result.add(deleteSoft(entity, deleteField, entityClazz, onHooks));
+        }
+
+        return result;
+    }
+
+    // Deletes an entity that was already loaded and policy-checked; the bulk paths call this per loaded entity instead of re-fetching by the bulk filter
+    private <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity deleteHard(Entity entity, Class<Entity> clazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks) {
         for(CRUDOnDeleteHook<ID, Entity> onHook : onHooks) {
             onHook.run(entity);
         }
@@ -35,11 +72,7 @@ public class CrudDeleteTransactionalHandlerImpl implements CrudDeleteTransaction
         return entity;
     }
 
-    @Override
-    @Transactional(readOnly = false)
-    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity deleteSoftTransactional(DynamicModelFilter filter, Field deleteField, Class<Entity> clazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks, boolean applyPolicies) {
-        Entity entity = getEntityForDeletion(filter, clazz, applyPolicies);
-
+    private <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity deleteSoft(Entity entity, Field deleteField, Class<Entity> clazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks) {
         for(CRUDOnDeleteHook<ID, Entity> onHook : onHooks) {
             onHook.run(entity);
         }
@@ -53,32 +86,6 @@ public class CrudDeleteTransactionalHandlerImpl implements CrudDeleteTransaction
         }
 
         return entity;
-    }
-
-    @Override
-    @Transactional(readOnly = false)
-    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkDeleteHardTransactional(DynamicModelFilter filter, Class<Entity> entityClazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks, boolean applyPolicies) {
-        List<Entity> entities = getEntitiesForDeletion(filter, entityClazz, applyPolicies);
-
-        List<Entity> result = new ArrayList<>();
-        for(Entity entity : entities) {
-            result.add(deleteHardTransactional(filter, entityClazz, onHooks, applyPolicies));
-        }
-
-        return result;
-    }
-
-    @Override
-    @Transactional(readOnly = false)
-    public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> bulkDeleteSoftTransactional(DynamicModelFilter filter, Field deleteField, Class<Entity> entityClazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks, boolean applyPolicies) {
-        List<Entity> entities = getEntitiesForDeletion(filter, entityClazz, applyPolicies);
-
-        List<Entity> result = new ArrayList<>();
-        for(Entity entity : entities) {
-            result.add(deleteSoftTransactional(filter, deleteField, entityClazz, onHooks, applyPolicies));
-        }
-
-        return result;
     }
 
     private <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity getEntityForDeletion(DynamicModelFilter filter, Class<Entity> clazz, boolean applyPolicies) {
