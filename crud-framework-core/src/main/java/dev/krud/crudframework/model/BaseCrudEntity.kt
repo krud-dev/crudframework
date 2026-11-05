@@ -47,27 +47,31 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
     }
 
     /**
-     * Like [BeanUtils.copyProperties], but copies property-by-property so that an uninitialized
-     * Kotlin `lateinit var` on [source] (which throws [UninitializedPropertyAccessException] when read)
-     * only skips that one property on [target] instead of aborting the entire copy.
+     * Like [BeanUtils.copyProperties], but copies property-by-property so that one property that can't be copied
+     * only skips that property on [target] instead of aborting the entire copy:
+     * - an uninitialized Kotlin `lateinit var` on [source] (throws [UninitializedPropertyAccessException] when read)
+     *   is copied as null
+     * - a null the setter rejects keeps [target]'s no-arg-constructor default: a primitive property, a `lateinit var`,
+     *   or a non-null Kotlin property left null by a JPA no-arg constructor (e.g. on [generateEmptyEntity])
      */
     private fun copyPropertiesIgnoringUninitializedLateinit(source: Any, target: Any) {
         for (descriptor in BeanUtils.getPropertyDescriptors(source.javaClass)) {
             val readMethod = descriptor.readMethod ?: continue
             val writeMethod = descriptor.writeMethod ?: continue
-            try {
-                writeMethod.invoke(target, readMethod.invoke(source))
+            val value = try {
+                readMethod.invoke(source)
             } catch (e: InvocationTargetException) {
                 if (e.targetException !is UninitializedPropertyAccessException) {
                     throw e
                 }
-                try {
-                    writeMethod.invoke(target, null)
-                } catch (ignored: IllegalArgumentException) {
-                    // primitive property (e.g. Int/Boolean) - leave the no-arg-constructor default
-                } catch (ignored: InvocationTargetException) {
-                    // non-null setter (e.g. a lateinit var) rejects null - the new copy's lateinit is uninitialized already
-                }
+                null
+            }
+            try {
+                writeMethod.invoke(target, value)
+            } catch (e: IllegalArgumentException) {
+                if (value != null) throw e
+            } catch (e: InvocationTargetException) {
+                if (value != null) throw e
             }
         }
     }
