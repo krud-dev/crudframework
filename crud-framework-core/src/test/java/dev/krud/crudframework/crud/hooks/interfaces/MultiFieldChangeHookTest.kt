@@ -19,6 +19,22 @@ class FinalHookTestEntity(
     override fun exists() = id != 0L
 }
 
+// A non-null constructor property, like `var name: String` on a JPA entity: the kotlin-jpa no-arg constructor leaves
+// it null, which is what KRUD's generateEmptyEntity() hands a hook as `original` on create
+class NonNullPropertyHookTestEntity(
+    var name: String,
+    var phone: String? = null,
+) : BaseCrudEntity<Long>() {
+    override var id: Long = 0L
+
+    @Suppress("unused")
+    constructor() : this("") {
+        javaClass.getDeclaredField("name").apply { isAccessible = true }.set(this, null)
+    }
+
+    override fun exists() = id != 0L
+}
+
 class MultiFieldChangeHookTest {
 
     private val properties = listOf(FinalHookTestEntity::phonePrefix, FinalHookTestEntity::phone)
@@ -111,5 +127,17 @@ class MultiFieldChangeHookTest {
         hook.runPreChange(updated, original)
 
         assertEquals("5550000", seenPhone)
+    }
+
+    @Test
+    fun `on create the empty original is copied even when a non-null property is null`() {
+        val created = NonNullPropertyHookTestEntity("Alice", "5550000")
+        var seenPhone: String? = "unset"
+        val hook = listOf(NonNullPropertyHookTestEntity::name, NonNullPropertyHookTestEntity::phone)
+            .preChange { o, _ -> seenPhone = o.phone }
+
+        hook.runPreChange(created, created.generateEmptyEntity() as NonNullPropertyHookTestEntity)
+
+        assertEquals(null, seenPhone)
     }
 }
