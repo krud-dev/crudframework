@@ -1,8 +1,6 @@
 package dev.krud.crudframework.crud.hooks.interfaces
 
 import dev.krud.crudframework.model.BaseCrudEntity
-import org.aopalliance.intercept.MethodInterceptor
-import org.springframework.aop.framework.ProxyFactory
 import kotlin.reflect.KProperty1
 
 enum class MultiFieldChangeCheckType {
@@ -10,6 +8,14 @@ enum class MultiFieldChangeCheckType {
     ANY
 }
 
+/**
+ * Runs when any (or all, see [checkType]) of [properties] changed on update.
+ *
+ * Each callback gets its own detached copy of the original entity, not the shared copy every change hook
+ * of the update compares against, so changing it inside a callback can't affect other hooks. `updated` is
+ * the entity being saved. A copy rather than a proxy, since a class proxy can't wrap a final Kotlin class
+ * and doesn't reach the values behind its final properties.
+ */
 abstract class MultiFieldChangeHook<Entity : BaseCrudEntity<*>>(
     val properties: List<KProperty1<Entity, *>>,
     val checkType: MultiFieldChangeCheckType = MultiFieldChangeCheckType.ANY
@@ -27,31 +33,21 @@ abstract class MultiFieldChangeHook<Entity : BaseCrudEntity<*>>(
 
     override fun runPreChange(entity: Entity, original: Entity) {
         if (!shouldTrigger(entity, original)) return
-        preChange(makeImmutable(original), entity)
+        preChange(detachedCopy(original), entity)
     }
 
     override fun runOnChange(entity: Entity, original: Entity) {
         if (!shouldTrigger(entity, original)) return
-        onChange(makeImmutable(original), entity)
+        onChange(detachedCopy(original), entity)
     }
 
     override fun runPostChange(entity: Entity, original: Entity) {
         if (!shouldTrigger(entity, original)) return
-        postChange(makeImmutable(original), entity)
+        postChange(detachedCopy(original), entity)
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun makeImmutable(entity: Entity): Entity {
-        val proxyFactory = ProxyFactory(entity)
-        proxyFactory.isProxyTargetClass = true
-        proxyFactory.addAdvice(MethodInterceptor { invocation ->
-            if (invocation.method.name.startsWith("set")) {
-                throw UnsupportedOperationException("Cannot modify the original entity inside a MultiFieldChangeHook callback")
-            }
-            invocation.proceed()
-        })
-        return proxyFactory.proxy as Entity
-    }
+    private fun detachedCopy(original: Entity): Entity = original.detachedCopy() as Entity
 
     private fun <E, T> KProperty1<E, T?>.getValue(instance: E): T? {
         return try {

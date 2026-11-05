@@ -35,6 +35,18 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
     }
 
     /**
+     * A new shallow copy of this entity's current property values. Unlike [saveOrGetCopy] it is never cached,
+     * so changes made to it reach neither this entity nor its saved copy. It needs a no-arg constructor,
+     * like [saveOrGetCopy].
+     */
+    internal fun detachedCopy(): BaseCrudEntity<ID> {
+        val detached = javaClass.getDeclaredConstructor().newInstance()
+        detached.isCopy = true
+        copyPropertiesIgnoringUninitializedLateinit(this, detached)
+        return detached
+    }
+
+    /**
      * Like [BeanUtils.copyProperties], but copies property-by-property so that an uninitialized
      * Kotlin `lateinit var` on [source] (which throws [UninitializedPropertyAccessException] when read)
      * only skips that one property on [target] instead of aborting the entire copy.
@@ -53,6 +65,8 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
                     writeMethod.invoke(target, null)
                 } catch (ignored: IllegalArgumentException) {
                     // primitive property (e.g. Int/Boolean) - leave the no-arg-constructor default
+                } catch (ignored: InvocationTargetException) {
+                    // non-null setter (e.g. a lateinit var) rejects null - the new copy's lateinit is uninitialized already
                 }
             }
         }
